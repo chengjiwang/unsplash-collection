@@ -1,6 +1,35 @@
 import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../lib/prisma.ts';
 
+export const getCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const id = String(req.params['id']);
+
+    const [collection, imageCount] = await Promise.all([
+      prisma.collection.findUnique({ where: { id } }),
+      prisma.collectionImage.count({ where: { collectionId: id } }),
+    ]);
+
+    if (collection === null) {
+      res.status(404).json({ error: 'Collection not found' });
+      return;
+    }
+
+    res.json({
+      id: collection.id,
+      name: collection.name,
+      created_at: collection.createdAt,
+      image_count: imageCount,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createCollection = async (
   req: Request,
   res: Response,
