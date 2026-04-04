@@ -1,9 +1,62 @@
 import { NextFunction, Request, Response } from 'express';
+import { Prisma } from '../../generated/prisma/client.ts';
 import { prisma } from '../lib/prisma.ts';
 import {
   AddImageSchema,
   CreateCollectionSchema,
 } from '../schemas/collectionSchemas.ts';
+
+export const getCollections = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { image_id, name, exclude_image_id } = req.query;
+
+    const where: Prisma.CollectionWhereInput = {};
+
+    const imagesFilter: Prisma.CollectionImageListRelationFilter = {};
+    if (typeof image_id === 'string' && image_id.length > 0) {
+      imagesFilter.some = { imageId: image_id };
+    }
+    if (typeof exclude_image_id === 'string' && exclude_image_id.length > 0) {
+      imagesFilter.none = { imageId: exclude_image_id };
+    }
+    if (Object.keys(imagesFilter).length > 0) {
+      where.images = imagesFilter;
+    }
+
+    if (typeof name === 'string' && name.length > 0) {
+      where.name = { contains: name, mode: 'insensitive' };
+    }
+
+    const collections = await prisma.collection.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: { select: { images: true } },
+        images: {
+          orderBy: { addedAt: 'desc' },
+          take: 3,
+          select: { thumbUrl: true },
+        },
+      },
+    });
+
+    res.json(
+      collections.map((c) => ({
+        id: c.id,
+        name: c.name,
+        created_at: c.createdAt,
+        image_count: c._count.images,
+        preview_images: c.images.map((img) => ({ thumb_url: img.thumbUrl })),
+      })),
+    );
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const getCollection = async (
   req: Request,
