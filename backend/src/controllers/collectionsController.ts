@@ -169,3 +169,35 @@ export const getCollectionImages = async (
     next(err);
   }
 };
+
+export const removeImageFromCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const collectionId = String(req.params['id']);
+    const imageId = String(req.params['imageId']);
+
+    const image = await prisma.collectionImage.findUnique({
+      where: {
+        collectionId_imageId: { collectionId, imageId },
+      },
+    });
+
+    if (image === null) {
+      res.status(404).json({ error: 'Image not found in this collection' });
+      return;
+    }
+
+    await prisma.collectionImage.delete({
+      where: {
+        collectionId_imageId: { collectionId, imageId },
+      },
+    });
+
+    res.json({ message: 'Image removed from collection' });
+  } catch (err) {
+    next(err);
+  }
+};
