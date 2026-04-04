@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../lib/prisma.ts';
-import { AddImageSchema } from '../schemas/collectionSchemas.ts';
+import {
+  AddImageSchema,
+  CreateCollectionSchema,
+} from '../schemas/collectionSchemas.ts';
 
 export const getCollection = async (
   req: Request,
@@ -37,14 +40,13 @@ export const createCollection = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { name } = req.body as { name?: string };
-
-    if (typeof name !== 'string' || name.trim() === '') {
+    const result = CreateCollectionSchema.safeParse(req.body);
+    if (!result.success) {
       res.status(400).json({ error: 'Collection name is required' });
       return;
     }
 
-    const trimmedName = name.trim();
+    const trimmedName = result.data.name.trim();
 
     const existing = await prisma.collection.findUnique({
       where: { name: trimmedName },
