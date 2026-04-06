@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,6 +10,16 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Brand semantic colors (from design system) */
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-border: var(--brand-border);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-gradient-from: var(--brand-gradient-from);
+  --color-brand-gradient-to: var(--brand-gradient-to);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,6 +55,28 @@
 
 :root {
   --radius: 0.625rem;
+
+  /* ── Brand color palette (source: colors.png) ────────────────────────────
+   *  Use these named variables throughout the app instead of raw hex values.
+   *
+   *  Role              Token                   Hex value        Usage
+   *  ─────────────────────────────────────────────────────────────────────
+   *  Primary text      --brand-ink             #121826          Headings, body text, nav icons
+   *  Secondary text    --brand-muted           #6C727F          Subtitles, photo counts, inactive nav
+   *  Borders/dividers  --brand-border          #E5E7EB          Input outlines, card borders, separators
+   *  Page/card BG      --brand-surface         #FFFFFF          Page background, card fill
+   *  Hover overlay     --brand-hover           #E5E7EBCC        Hover state background (border at 80% opacity)
+   *  Gradient start    --brand-gradient-from   #F2C593          Title gradient left (warm tan)
+   *  Gradient end      --brand-gradient-to     #8A3282          Title gradient right (purple)
+   * ───────────────────────────────────────────────────────────────────── */
+  --brand-ink: #121826;
+  --brand-muted: #6c727f;
+  --brand-border: #e5e7eb;
+  --brand-surface: #ffffff;
+  --brand-hover: #e5e7ebcc;
+  --brand-gradient-from: #f2c593;
+  --brand-gradient-to: #8a3282;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
