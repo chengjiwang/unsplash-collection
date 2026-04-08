@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import NavBar from '@/components/layout/NavBar.vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 </script>
 
 <template>
@@ -9,4 +10,5 @@ import NavBar from '@/components/layout/NavBar.vue'
       <RouterView />
     </main>
   </div>
+  <VueQueryDevtools />
 </template>
