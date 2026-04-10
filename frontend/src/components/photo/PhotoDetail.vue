@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { downloadPhotoById } from '@/api/unsplash'
 import type { UnsplashPhoto } from '@/types'
 import { Download, Plus } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   photo: UnsplashPhoto
@@ -11,6 +12,8 @@ const emit = defineEmits<{
   addToCollection: []
 }>()
 
+const isDownloading = ref(false)
+
 const formattedDate = computed(() => {
   return new Date(props.photo.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -18,6 +21,22 @@ const formattedDate = computed(() => {
     day: 'numeric',
   })
 })
+
+async function handleDownload() {
+  if (isDownloading.value) return
+  isDownloading.value = true
+  try {
+    const response = await downloadPhotoById(props.photo.id)
+    const url = URL.createObjectURL(response.data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${props.photo.id}.jpg`
+    a.click()
+    URL.revokeObjectURL(url)
+  } finally {
+    isDownloading.value = false
+  }
+}
 </script>
 
 <template>
@@ -52,16 +71,14 @@ const formattedDate = computed(() => {
         Add to Collection
       </button>
 
-      <a
-        :href="photo.links.download"
-        target="_blank"
-        rel="noopener noreferrer"
-        download
-        class="flex items-center gap-2 rounded-sm px-4 py-2 text-sm font-medium text-brand-ink transition-colors bg-brand-border hover:bg-brand-hover"
+      <button
+        class="flex items-center gap-2 cursor-pointer rounded-sm px-4 py-2 text-sm font-medium text-brand-ink transition-colors bg-brand-border hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        :disabled="isDownloading"
+        @click="handleDownload"
       >
         <Download class="h-4 w-4" />
-        Download
-      </a>
+        {{ isDownloading ? 'Downloading...' : 'Download' }}
+      </button>
     </div>
   </div>
 </template>

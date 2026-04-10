@@ -10,3 +10,6 @@ export const searchPhotos = (query: string, page = 1) =>
 
 export const getPhotoById = (id: string) =>
   apiClient.get<UnsplashPhoto>(`/api/unsplash/photos/${id}`)
+
+export const downloadPhotoById = (id: string) =>
+  apiClient.get(`/api/unsplash/photos/${id}/download`, { responseType: 'blob' })
