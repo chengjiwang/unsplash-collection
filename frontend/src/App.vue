@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavBar from '@/components/layout/NavBar.vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
@@ -11,4 +12,5 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
     </main>
   </div>
   <VueQueryDevtools />
+  <Toaster position="bottom-right" rich-colors />
 </template>

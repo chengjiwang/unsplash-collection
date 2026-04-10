@@ -5,6 +5,7 @@ import type { Collection, UnsplashPhoto } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { Plus, Search } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps<{
   open: boolean
@@ -62,9 +63,13 @@ const addMutation = useMutation({
       author_name: props.photo.user.name,
       published_at: props.photo.created_at,
     }),
-  onSuccess: () => {
+  onSuccess: (_data, collection) => {
     queryClient.invalidateQueries({ queryKey: ['collections'] })
+    toast.success(`Added to "${collection.name}"`)
     emit('update:open', false)
+  },
+  onError: () => {
+    toast.error('Failed to add. Please try again.')
   },
 })
 
