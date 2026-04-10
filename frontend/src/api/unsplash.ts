@@ -7,3 +7,6 @@ export const searchPhotos = (query: string, page = 1) =>
     total: number
     total_pages: number
   }>('/api/unsplash/search', { params: { query, page } })
+
+export const getPhotoById = (id: string) =>
+  apiClient.get<UnsplashPhoto>(`/api/unsplash/photos/${id}`)

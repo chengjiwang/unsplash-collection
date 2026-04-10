@@ -6,6 +6,9 @@ export interface UnsplashPhoto {
   }
   user: {
     name: string
+    profile_image?: {
+      small: string
+    }
   }
   created_at: string
   description: string | null
