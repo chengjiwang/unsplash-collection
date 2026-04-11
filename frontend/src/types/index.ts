@@ -3,6 +3,7 @@ export interface UnsplashPhoto {
   urls: {
     regular: string
     thumb: string
+    small: string
   }
   user: {
     name: string
@@ -23,7 +24,7 @@ export interface Collection {
   name: string
   created_at: string
   image_count: number
-  preview_images: { thumb_url: string }[]
+  preview_images: { thumb_url: string; small_url: string }[]
 }
 
 export interface CollectionImage {
@@ -31,6 +32,7 @@ export interface CollectionImage {
   image_id: string
   image_url: string
   thumb_url: string
+  small_url: string
   author_name: string
   published_at: string
   added_at: string

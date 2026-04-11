@@ -60,6 +60,7 @@ const addMutation = useMutation({
       image_id: props.photo.id,
       image_url: props.photo.urls.regular,
       thumb_url: props.photo.urls.thumb,
+      small_url: props.photo.urls.small,
       author_name: props.photo.user.name,
       published_at: props.photo.created_at,
     }),
