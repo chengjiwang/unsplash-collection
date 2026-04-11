@@ -7,6 +7,12 @@ export const getCollections = (params?: {
   exclude_image_id?: string
 }) => apiClient.get<Collection[]>('/api/collections', { params })
 
+export const createCollection = (name: string) =>
+  apiClient.post<Collection>('/api/collections', { name })
+
+export const getCollectionImages = (collectionId: string) =>
+  apiClient.get<CollectionImage[]>(`/api/collections/${collectionId}/images`)
+
 export const addImageToCollection = (
   collectionId: string,
   payload: Omit<CollectionImage, 'id' | 'added_at'>,
