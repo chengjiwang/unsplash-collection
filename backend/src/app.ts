@@ -1,8 +1,8 @@
 import cors from 'cors';
 import express from 'express';
-import errorHandler from './middlewares/errorHandler.ts';
-import collectionsRouter from './routes/collections.ts';
-import unsplashRouter from './routes/unsplash.ts';
+import errorHandler from './middlewares/errorHandler.js';
+import collectionsRouter from './routes/collections.js';
+import unsplashRouter from './routes/unsplash.js';
 
 const app = express();
 
