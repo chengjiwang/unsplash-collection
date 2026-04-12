@@ -22,7 +22,7 @@ defineEmits<{
         <div class="flex h-full gap-0.5">
           <div class="h-full w-2/3 overflow-hidden">
             <img
-              :src="collection.preview_images[0]?.thumb_url"
+              :src="collection.preview_images[0]?.small_url"
               :alt="collection.name"
               class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -30,14 +30,14 @@ defineEmits<{
           <div class="flex h-full w-1/3 flex-col gap-0.5">
             <div class="h-1/2 overflow-hidden">
               <img
-                :src="collection.preview_images[1]?.thumb_url"
+                :src="collection.preview_images[1]?.small_url"
                 :alt="collection.name"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div class="h-1/2 overflow-hidden">
               <img
-                :src="collection.preview_images[2]?.thumb_url"
+                :src="collection.preview_images[2]?.small_url"
                 :alt="collection.name"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
@@ -51,14 +51,14 @@ defineEmits<{
         <div class="flex h-full gap-0.5">
           <div class="h-full w-1/2 overflow-hidden">
             <img
-              :src="collection.preview_images[0]?.thumb_url"
+              :src="collection.preview_images[0]?.small_url"
               :alt="collection.name"
               class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
           <div class="h-full w-1/2 overflow-hidden">
             <img
-              :src="collection.preview_images[1]?.thumb_url"
+              :src="collection.preview_images[1]?.small_url"
               :alt="collection.name"
               class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -69,7 +69,7 @@ defineEmits<{
       <!-- 1 image: full width -->
       <template v-else-if="collection.preview_images.length === 1">
         <img
-          :src="collection.preview_images[0]?.thumb_url"
+          :src="collection.preview_images[0]?.small_url"
           :alt="collection.name"
           class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

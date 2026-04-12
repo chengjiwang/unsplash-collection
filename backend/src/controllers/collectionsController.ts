@@ -39,7 +39,7 @@ export const getCollections = async (
         images: {
           orderBy: { addedAt: 'desc' },
           take: 3,
-          select: { thumbUrl: true },
+          select: { thumbUrl: true, smallUrl: true },
         },
       },
     });
@@ -50,7 +50,10 @@ export const getCollections = async (
         name: c.name,
         created_at: c.createdAt,
         image_count: c._count.images,
-        preview_images: c.images.map((img) => ({ thumb_url: img.thumbUrl })),
+        preview_images: c.images.map((img) => ({
+          thumb_url: img.thumbUrl,
+          small_url: img.smallUrl,
+        })),
       })),
     );
   } catch (err) {
@@ -138,8 +141,14 @@ export const addImageToCollection = async (
       return;
     }
 
-    const { image_id, image_url, thumb_url, author_name, published_at } =
-      result.data;
+    const {
+      image_id,
+      image_url,
+      thumb_url,
+      small_url,
+      author_name,
+      published_at,
+    } = result.data;
 
     const collection = await prisma.collection.findUnique({
       where: { id: collectionId },
@@ -169,6 +178,7 @@ export const addImageToCollection = async (
         imageId: image_id.trim(),
         imageUrl: image_url.trim(),
         thumbUrl: thumb_url.trim(),
+        smallUrl: small_url.trim(),
         authorName: author_name.trim(),
         publishedAt: new Date(published_at),
       },
@@ -213,6 +223,7 @@ export const getCollectionImages = async (
         image_id: img.imageId,
         image_url: img.imageUrl,
         thumb_url: img.thumbUrl,
+        small_url: img.smallUrl,
         author_name: img.authorName,
         published_at: img.publishedAt,
         added_at: img.addedAt,

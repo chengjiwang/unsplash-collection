@@ -27,6 +27,7 @@ model CollectionImage {
   imageId      String     @map("image_id") @db.VarChar(100)
   imageUrl     String     @map("image_url")
   thumbUrl     String     @map("thumb_url")
+  smallUrl     String     @map("small_url")
   authorName   String     @map("author_name") @db.VarChar(255)
   publishedAt  DateTime   @map("published_at")
   addedAt      DateTime   @default(now()) @map("added_at")

@@ -52,7 +52,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         @click="router.push(`/photos/${photo.id}`)"
       >
         <img
-          :src="photo.urls.thumb"
+          :src="photo.urls.small"
           :alt="photo.alt_description ?? photo.description ?? 'Unsplash photo'"
           class="w-full object-cover"
           loading="lazy"

@@ -18,7 +18,7 @@ const router = useRouter()
       @click="router.push(`/photos/${image.image_id}`)"
     >
       <img
-        :src="image.thumb_url"
+        :src="image.small_url"
         :alt="image.author_name"
         class="w-full rounded-xl object-cover transition-opacity duration-200 group-hover:opacity-90"
       />
