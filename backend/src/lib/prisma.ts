@@ -14,7 +14,7 @@ const connectDB = async () => {
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`Database connection error: ${message}`);
-    process.exit(1);
+    throw error;
   }
 };
 

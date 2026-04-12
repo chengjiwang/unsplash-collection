@@ -8,22 +8,18 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-connectDB();
+connectDB().catch((err) => {
+  console.error('Failed to connect to database on startup:', err);
+});
 
 // Handle unhandled promise rejections (e.g., database connection errors)
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
-  server.close(async () => {
-    await disconnectDB();
-    process.exit(1);
-  });
 });
 
 // Handle uncaught exceptions
-process.on('uncaughtException', async (err) => {
+process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
-  await disconnectDB();
-  process.exit(1);
 });
 
 // Graceful shutdown
