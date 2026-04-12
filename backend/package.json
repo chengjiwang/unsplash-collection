@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "prisma generate && tsc",
-    "vercel-build": "prisma generate",
+    "vercel-build": "prisma generate && esbuild api/index.ts --bundle --outfile=api/index.js --platform=node --packages=external --format=esm",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "lint": "eslint src/",
@@ -17,6 +17,9 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
@@ -36,6 +39,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-promise": "^7.2.1",
+    "esbuild": "^0.25.0",
     "prisma": "^7.6.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
