@@ -6,7 +6,7 @@ import {
   getCollectionImages,
   getCollections,
   removeImageFromCollection,
-} from '../controllers/collectionsController.ts';
+} from '../controllers/collectionsController.js';
 
 const router = Router();
 

@@ -3,7 +3,7 @@ import {
   downloadPhoto,
   getPhoto,
   searchPhotos,
-} from '../controllers/unsplashController.ts';
+} from '../controllers/unsplashController.js';
 
 const router = Router();
 

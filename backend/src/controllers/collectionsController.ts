@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { Prisma } from '../../generated/prisma/client.ts';
-import { prisma } from '../lib/prisma.ts';
+import { Prisma } from '../../generated/prisma/client.js';
+import { prisma } from '../lib/prisma.js';
 import {
   AddImageSchema,
   CreateCollectionSchema,
-} from '../schemas/collectionSchemas.ts';
+} from '../schemas/collectionSchemas.js';
 
 export const getCollections = async (
   req: Request,
