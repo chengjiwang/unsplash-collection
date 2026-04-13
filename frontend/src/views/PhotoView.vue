@@ -16,7 +16,7 @@ const modalOpen = ref(false)
 const { data: photo, isLoading: photoLoading, isError } = usePhoto(photoId)
 
 const collectionsParams = computed(() => ({ image_id: photoId.value }))
-const { data: collections } = useCollections(collectionsParams)
+const { data: collections, isLoading: collectionsLoading } = useCollections(collectionsParams)
 
 function goBack() {
   router.back()
@@ -60,7 +60,11 @@ function goBack() {
 
         <hr class="border-brand-border" />
 
-        <PhotoCollectionList :photo-id="photoId" :collections="collections ?? []" />
+        <PhotoCollectionList
+          :photo-id="photoId"
+          :collections="collections ?? []"
+          :is-loading="collectionsLoading"
+        />
       </div>
     </div>
 
