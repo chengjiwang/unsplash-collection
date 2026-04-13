@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "prisma generate && tsc",
-    "vercel-build": "prisma generate && esbuild api/index.ts --bundle --outfile=api/index.js --platform=node --packages=external --format=esm",
+    "prisma:bundle": "prisma generate && esbuild generated/prisma/client.ts --bundle --outfile=generated/prisma/client.js --platform=node --packages=external --format=esm",
+    "build": "pnpm prisma:bundle && tsc",
+    "vercel-build": "pnpm build",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "lint": "eslint src/",
