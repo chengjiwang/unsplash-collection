@@ -41,6 +41,14 @@ pnpm dev
 pnpm build
 ```
 
+### Deploy on Vercel
+
+This app uses Vue Router history mode. Directly opening routes such as `/collections`
+or `/photos/:id` requires a Vercel SPA fallback so those requests resolve to
+`/index.html` instead of returning `404 NOT_FOUND`.
+
+The required rewrite is already defined in `vercel.json`.
+
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
 
 ```sh
