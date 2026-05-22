@@ -9,12 +9,12 @@ import {
 export const getCollections = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const { image_id, name, exclude_image_id } = req.query;
 
-    const where: Prisma.CollectionWhereInput = {};
+    const where: Prisma.CollectionWhereInput = { userId: req.userId };
 
     const imagesFilter: Prisma.CollectionImageListRelationFilter = {};
     if (typeof image_id === 'string' && image_id.length > 0) {
@@ -54,7 +54,7 @@ export const getCollections = async (
           thumb_url: img.thumbUrl,
           small_url: img.smallUrl,
         })),
-      })),
+      }))
     );
   } catch (err) {
     next(err);
@@ -64,7 +64,7 @@ export const getCollections = async (
 export const getCollection = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const id = String(req.params['id']);
@@ -74,7 +74,7 @@ export const getCollection = async (
       prisma.collectionImage.count({ where: { collectionId: id } }),
     ]);
 
-    if (collection === null) {
+    if (collection === null || collection.userId !== req.userId) {
       res.status(404).json({ error: 'Collection not found' });
       return;
     }
@@ -93,7 +93,7 @@ export const getCollection = async (
 export const createCollection = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const result = CreateCollectionSchema.safeParse(req.body);
@@ -105,16 +105,16 @@ export const createCollection = async (
     const trimmedName = result.data.name.trim();
 
     const existing = await prisma.collection.findUnique({
-      where: { name: trimmedName },
+      where: { userId_name: { userId: req.userId, name: trimmedName } },
     });
 
     if (existing !== null) {
-      res.status(400).json({ error: 'Collection name is required' });
+      res.status(400).json({ error: 'Collection name already exists' });
       return;
     }
 
     const collection = await prisma.collection.create({
-      data: { name: trimmedName },
+      data: { name: trimmedName, userId: req.userId },
     });
 
     res.status(201).json({
@@ -130,7 +130,7 @@ export const createCollection = async (
 export const addImageToCollection = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const collectionId = String(req.params['id']);
@@ -154,7 +154,7 @@ export const addImageToCollection = async (
       where: { id: collectionId },
     });
 
-    if (collection === null) {
+    if (collection === null || collection.userId !== req.userId) {
       res.status(404).json({ error: 'Collection not found' });
       return;
     }
@@ -198,7 +198,7 @@ export const addImageToCollection = async (
 export const getCollectionImages = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const collectionId = String(req.params['id']);
@@ -207,7 +207,7 @@ export const getCollectionImages = async (
       where: { id: collectionId },
     });
 
-    if (collection === null) {
+    if (collection === null || collection.userId !== req.userId) {
       res.status(404).json({ error: 'Collection not found' });
       return;
     }
@@ -227,7 +227,7 @@ export const getCollectionImages = async (
         author_name: img.authorName,
         published_at: img.publishedAt,
         added_at: img.addedAt,
-      })),
+      }))
     );
   } catch (err) {
     next(err);
@@ -237,11 +237,20 @@ export const getCollectionImages = async (
 export const removeImageFromCollection = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const collectionId = String(req.params['id']);
     const imageId = String(req.params['imageId']);
+
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+    });
+
+    if (collection === null || collection.userId !== req.userId) {
+      res.status(404).json({ error: 'Collection not found' });
+      return;
+    }
 
     const image = await prisma.collectionImage.findUnique({
       where: {
