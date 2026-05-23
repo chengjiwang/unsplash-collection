@@ -48,16 +48,19 @@ A full-stack web application that integrates with the Unsplash API, allowing use
 - [Prisma ORM](https://www.prisma.io/) — Database access
 - [PostgreSQL](https://www.postgresql.org/) — Data persistence
 - [Zod](https://zod.dev/) — Request validation
+- [bcryptjs](https://github.com/dcodeIO/bcrypt.js) — Password hashing
+- [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) — JWT token signing & verification
 
 ## Features
 
 This application/site was created as a submission to a [DevChallenges](https://devchallenges.io/challenges-dashboard) challenge.
 
+- **User Registration & Login** — Sign up and log in with email and password; passwords are hashed with bcrypt
+- **JWT Authentication** — Sessions managed via HttpOnly cookies
+- **Protected Routes** — Collections page requires authentication; unauthenticated users are redirected to the login page and returned to the original destination after signing in
 - **Image Search** — Search Unsplash photos by keyword; results display on Enter
 - **Image Detail** — View full-size photo with author name and published date
 - **Collection Management** — Create named collections and add/remove images
 - **Smart Add Modal** — Search existing collections when adding an image; filters out collections the image already belongs to
 - **Image Download** — Download original images directly from the detail page
 - **Collections Gallery** — Browse all collections and preview the images inside each one
-
-
