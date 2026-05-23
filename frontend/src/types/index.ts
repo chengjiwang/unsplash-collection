@@ -37,3 +37,8 @@ export interface CollectionImage {
   published_at: string
   added_at: string
 }
+
+export interface AuthUser {
+  id: string
+  email: string
+}
