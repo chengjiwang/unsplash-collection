@@ -2,6 +2,7 @@
 import CollectionCard from '@/components/collections/CollectionCard.vue'
 import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import { useCreateCollection } from '@/queries/mutations'
 import { useCollectionImages, useCollections } from '@/queries/useCollections'
 import { Plus } from 'lucide-vue-next'
@@ -64,12 +65,13 @@ function openAddModal() {
               : `${selectedCollection.image_count} photos`
           }}
         </p>
-        <button
-          class="mt-4 cursor-pointer text-sm text-brand-muted transition-colors hover:text-brand-ink"
+        <Button
+          variant="ghost"
+          class="mt-4 text-sm text-brand-muted transition-colors hover:text-brand-ink"
           @click="backToList"
         >
           ← Back to Collections
-        </button>
+        </Button>
       </div>
 
       <div v-if="imagesLoading" class="flex justify-center pt-20">
@@ -122,13 +124,14 @@ function openAddModal() {
         />
 
         <!-- Add new collection card -->
-        <button
-          class="flex min-h-52 flex-col items-center justify-center cursor-pointer gap-2 rounded-xl bg-brand-border text-brand-muted transition-colors hover:bg-brand-hover hover:text-brand-ink"
+        <Button
+          variant="ghost"
+          class="flex min-h-52 flex-col items-center justify-center gap-2 rounded-xl bg-brand-border text-brand-muted transition-colors hover:bg-brand-hover hover:text-brand-ink h-auto"
           @click="openAddModal"
         >
           <Plus class="h-6 w-6" />
           <span class="font-medium">Add new collection</span>
-        </button>
+        </Button>
       </div>
     </template>
 
@@ -147,19 +150,21 @@ function openAddModal() {
             @keyup.enter="handleCreate"
           />
           <div class="flex justify-center gap-3">
-            <button
-              class="rounded-md cursor-pointer bg-brand-border px-6 py-2 text-sm font-medium text-brand-ink transition-opacity hover:opacity-90 disabled:opacity-50"
+            <Button
+              variant="secondary"
+              class="rounded-md px-6 py-2 text-sm font-medium text-brand-ink transition-opacity hover:opacity-90 disabled:opacity-50"
               :disabled="isPending || !newCollectionName.trim()"
               @click="handleCreate"
             >
               Save
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               class="rounded-md cursor-pointer px-6 py-2 text-sm font-medium text-brand-ink hover:text-brand-muted"
               @click="showAddModal = false"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       </DialogContent>

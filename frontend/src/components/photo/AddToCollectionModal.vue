@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { addImageToCollection, getCollections } from '@/api/collections'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import type { Collection, UnsplashPhoto } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { Plus, Search } from 'lucide-vue-next'
@@ -127,8 +128,10 @@ const addingCollectionId = computed<string | undefined>(
           </div>
 
           <!-- Add button (visible on hover) -->
-          <button
-            class="flex cursor-pointer items-center gap-1 text-xs text-brand-muted opacity-0 transition-opacity group-hover:opacity-100"
+          <Button
+            variant="ghost"
+            size="sm"
+            class="flex items-center gap-1 text-xs text-brand-muted opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
             :class="{
               'opacity-100': addMutation.isPending && addingCollectionId === collection.id,
             }"
@@ -141,7 +144,7 @@ const addingCollectionId = computed<string | undefined>(
                 ? 'Adding...'
                 : 'Add to Collection'
             }}</span>
-          </button>
+          </Button>
         </li>
 
         <!-- Empty state -->

@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useRegister } from '@/queries/useAuth'
+import { Button } from '@/components/ui/button'
 
 const email = ref('')
 const password = ref('')
@@ -77,13 +78,13 @@ function handleSubmit() {
           {{ (error as any)?.response?.data?.message ?? 'Registration failed' }}
         </p>
 
-        <button
+        <Button
           type="submit"
           :disabled="isPending || !!validationError"
           class="mt-2 rounded-lg bg-brand-ink py-2 text-sm font-semibold text-white transition-opacity disabled:opacity-60"
         >
           {{ isPending ? 'Registering…' : 'Register' }}
-        </button>
+        </Button>
       </form>
 
       <p class="mt-6 text-center text-sm text-brand-muted">

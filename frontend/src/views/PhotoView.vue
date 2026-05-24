@@ -6,6 +6,7 @@ import { useCollections } from '@/queries/useCollections'
 import { usePhoto } from '@/queries/usePhoto'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 const router = useRouter()
@@ -35,12 +36,13 @@ function goBack() {
     <!-- Error -->
     <div v-else-if="isError" class="flex h-96 flex-col items-center justify-center gap-4">
       <p class="text-sm text-brand-muted">Failed to load photo.</p>
-      <button
-        class="rounded-md border border-brand-border px-4 py-2 text-sm text-brand-ink hover:bg-brand-hover"
+      <Button
+        variant="outline"
+        class="rounded-md border-brand-border px-4 py-2 text-sm text-brand-ink hover:bg-brand-hover"
         @click="goBack"
       >
         Go back
-      </button>
+      </Button>
     </div>
 
     <!-- Content -->
