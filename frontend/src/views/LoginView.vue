@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLogin } from '@/queries/useAuth'
+import { Button } from '@/components/ui/button'
 
 const email = ref('')
 const password = ref('')
@@ -10,6 +11,12 @@ const { mutate: login, isPending, isError } = useLogin()
 function handleSubmit() {
   if (!email.value || !password.value) return
   login({ email: email.value, password: password.value })
+}
+
+function handleGuestLogin() {
+  email.value = 'guest@example.com'
+  password.value = 'qS7WM5qyYa9x5jG'
+  setTimeout(handleSubmit, 300)
 }
 </script>
 
@@ -47,13 +54,23 @@ function handleSubmit() {
 
         <p v-if="isError" class="text-sm text-red-500">Invalid credentials</p>
 
-        <button
+        <Button
           type="submit"
           :disabled="isPending"
           class="mt-2 rounded-lg bg-brand-ink py-2 text-sm font-semibold text-white transition-opacity disabled:opacity-60"
         >
           {{ isPending ? 'Logging in…' : 'Login' }}
-        </button>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          :disabled="isPending"
+          class="rounded-lg border-brand-border py-2 text-sm font-semibold text-brand-ink transition-opacity hover:bg-brand-surface disabled:opacity-60"
+          @click="handleGuestLogin"
+        >
+          Guest Login
+        </Button>
       </form>
 
       <p class="mt-6 text-center text-sm text-brand-muted">
