@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRemoveImage } from '@/queries/mutations'
 import type { Collection } from '@/types'
+import { Button } from '@/components/ui/button'
 import { Minus } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -20,12 +21,13 @@ function handleRemove(collectionId: string) {
   <div class="flex flex-col gap-2">
     <h2 class="text-lg font-semibold text-brand-ink">Collections</h2>
 
-    <ul v-if="isLoading" class="flex flex-col gap-2" aria-busy="true" aria-label="Loading collections">
-      <li
-        v-for="index in 3"
-        :key="index"
-        class="flex items-center gap-3 rounded-lg px-3 py-2.5"
-      >
+    <ul
+      v-if="isLoading"
+      class="flex flex-col gap-2"
+      aria-busy="true"
+      aria-label="Loading collections"
+    >
+      <li v-for="index in 3" :key="index" class="flex items-center gap-3 rounded-lg px-3 py-2.5">
         <div class="h-12 w-12 shrink-0 animate-pulse rounded-md bg-brand-border/70" />
 
         <div class="flex flex-1 flex-col gap-2">
@@ -60,19 +62,19 @@ function handleRemove(collectionId: string) {
         </div>
 
         <!-- Remove button (visible on hover) -->
-        <button
-          class="flex cursor-pointer items-center gap-1 text-xs text-brand-ink opacity-0 transition-opacity group-hover:opacity-100"
+        <Button
+          variant="ghost"
+          size="sm"
+          class="flex items-center gap-1 text-xs text-brand-ink opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
           :disabled="isPending"
           @click="handleRemove(collection.id)"
         >
           <Minus class="h-3.5 w-3.5" />
           Remove
-        </button>
+        </Button>
       </li>
     </ul>
 
-    <p v-else class="text-sm text-brand-muted">
-      Not in any collection yet.
-    </p>
+    <p v-else class="text-sm text-brand-muted">Not in any collection yet.</p>
   </div>
 </template>

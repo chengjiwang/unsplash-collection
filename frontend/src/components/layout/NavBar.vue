@@ -57,7 +57,7 @@ function handleLogout() {
         <template v-if="authStore.isLoggedIn">
           <DropdownMenu>
             <DropdownMenuTrigger
-              class="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-brand-ink text-sm font-medium text-white focus:outline-none"
+              class="cursor-pointer ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-brand-ink text-sm font-medium text-white focus:outline-none"
             >
               {{ authStore.user?.email?.[0]?.toUpperCase() }}
             </DropdownMenuTrigger>
