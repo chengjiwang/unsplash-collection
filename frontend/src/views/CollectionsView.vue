@@ -52,26 +52,28 @@ function openAddModal() {
   <div class="mx-auto max-w-7xl px-6 py-10">
     <!-- Collection Detail View -->
     <template v-if="selectedId && selectedCollection">
-      <div class="mb-8 text-center">
-        <h1
-          class="bg-linear-to-r from-brand-gradient-from to-brand-gradient-to bg-clip-text text-4xl font-bold text-transparent"
-        >
-          {{ selectedCollection.name }}
-        </h1>
-        <p class="mt-2 text-brand-muted">
-          {{
-            selectedCollection.image_count === 1
-              ? '1 photo'
-              : `${selectedCollection.image_count} photos`
-          }}
-        </p>
+      <div class="mb-4">
         <Button
-          variant="ghost"
-          class="mt-4 text-sm text-brand-muted transition-colors hover:text-brand-ink"
+          variant="outline"
+          class="text-sm text-brand-muted transition-colors hover:text-brand-ink"
           @click="backToList"
         >
           ← Back to Collections
         </Button>
+        <div class="mb-8 text-center">
+          <h1
+            class="bg-linear-to-r from-brand-gradient-from to-brand-gradient-to bg-clip-text text-4xl font-bold text-transparent"
+          >
+            {{ selectedCollection.name }}
+          </h1>
+          <p class="mt-2 text-brand-muted">
+            {{
+              selectedCollection.image_count === 1
+                ? '1 photo'
+                : `${selectedCollection.image_count} photos`
+            }}
+          </p>
+        </div>
       </div>
 
       <div v-if="imagesLoading" class="flex justify-center pt-20">
