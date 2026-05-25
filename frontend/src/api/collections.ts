@@ -10,6 +10,9 @@ export const getCollections = (params?: {
 export const createCollection = (name: string) =>
   apiClient.post<Collection>('/api/collections', { name })
 
+export const getCollection = (collectionId: string) =>
+  apiClient.get<Collection>(`/api/collections/${collectionId}`)
+
 export const getCollectionImages = (collectionId: string) =>
   apiClient.get<CollectionImage[]>(`/api/collections/${collectionId}/images`)
 

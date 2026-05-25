@@ -24,7 +24,7 @@ export interface Collection {
   name: string
   created_at: string
   image_count: number
-  preview_images: { thumb_url: string; small_url: string }[]
+  preview_images?: { thumb_url: string; small_url: string }[]
 }
 
 export interface CollectionImage {
