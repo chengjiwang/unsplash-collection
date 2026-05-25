@@ -1,4 +1,4 @@
-import type { Collection, CollectionImage } from '@/types'
+import type { Collection, CollectionDetail, CollectionImage } from '@/types'
 import apiClient from './axios'
 
 export const getCollections = (params?: {
@@ -11,7 +11,7 @@ export const createCollection = (name: string) =>
   apiClient.post<Collection>('/api/collections', { name })
 
 export const getCollection = (collectionId: string) =>
-  apiClient.get<Collection>(`/api/collections/${collectionId}`)
+  apiClient.get<CollectionDetail>(`/api/collections/${collectionId}`)
 
 export const getCollectionImages = (collectionId: string) =>
   apiClient.get<CollectionImage[]>(`/api/collections/${collectionId}/images`)
