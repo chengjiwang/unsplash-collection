@@ -27,6 +27,8 @@ export interface Collection {
   preview_images: { thumb_url: string; small_url: string }[]
 }
 
+export type CollectionDetail = Omit<Collection, 'preview_images'>
+
 export interface CollectionImage {
   id: string
   image_id: string

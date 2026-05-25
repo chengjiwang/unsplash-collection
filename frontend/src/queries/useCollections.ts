@@ -1,4 +1,4 @@
-import { getCollectionImages, getCollections } from '@/api/collections'
+import { getCollection, getCollectionImages, getCollections } from '@/api/collections'
 import { useQuery } from '@tanstack/vue-query'
 import { computed, type Ref } from 'vue'
 
@@ -15,6 +15,13 @@ export const useCollections = (
   useQuery({
     queryKey: computed(() => ['collections', params?.value]),
     queryFn: () => getCollections(params?.value).then((r) => r.data),
+  })
+
+export const useCollection = (collectionId: Ref<string>) =>
+  useQuery({
+    queryKey: computed(() => ['collection', collectionId.value]),
+    queryFn: () => getCollection(collectionId.value).then((r) => r.data),
+    enabled: computed(() => !!collectionId.value),
   })
 
 export const useCollectionImages = (collectionId: Ref<string>) =>
