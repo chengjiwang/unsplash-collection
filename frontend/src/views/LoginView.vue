@@ -16,7 +16,7 @@ function handleSubmit() {
 function handleGuestLogin() {
   email.value = 'guest@example.com'
   password.value = 'qS7WM5qyYa9x5jG'
-  setTimeout(handleSubmit, 300)
+  handleSubmit()
 }
 </script>
 
