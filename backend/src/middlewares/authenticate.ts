@@ -6,7 +6,10 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.cookies?.token as string | undefined;
+  const bearerToken = req.headers.authorization?.startsWith('Bearer ')
+    ? req.headers.authorization.slice(7)
+    : undefined;
+  const token = bearerToken ?? (req.cookies?.token as string | undefined);
   if (!token) {
     res.status(401).json({ error: 'Unauthorized' });
     return;

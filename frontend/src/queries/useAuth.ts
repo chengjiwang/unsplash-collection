@@ -11,7 +11,7 @@ export const useLogin = () => {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       login(email, password).then((r) => r.data),
     onSuccess: (data) => {
-      authStore.setAuth(data.user)
+      authStore.setAuth(data.user, data.token)
       const redirect = (route.query.redirect as string) || '/collections'
       router.push(redirect)
     },
@@ -25,7 +25,7 @@ export const useRegister = () => {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       register(email, password).then((r) => r.data),
     onSuccess: (data) => {
-      authStore.setAuth(data.user)
+      authStore.setAuth(data.user, data.token)
       router.push('/collections')
     },
   })
