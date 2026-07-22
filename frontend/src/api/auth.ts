@@ -2,6 +2,7 @@ import apiClient from './axios'
 import type { AuthUser } from '@/types'
 
 export interface AuthResponse {
+  token: string
   user: AuthUser
 }
 

@@ -7,6 +7,16 @@ const apiClient = axios.create({
   withCredentials: true,
 })
 
+apiClient.interceptors.request.use((config) => {
+  const authStore = useAuthStore()
+
+  if (authStore.token) {
+    config.headers.Authorization = `Bearer ${authStore.token}`
+  }
+
+  return config
+})
+
 // 401 自動登出並導向登入頁
 apiClient.interceptors.response.use(
   (response) => response,
