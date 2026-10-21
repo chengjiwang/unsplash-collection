@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useRegister } from '@/queries/useAuth'
 import { Button } from '@/components/ui/button'
+import { getApiErrorMessage } from '@/lib/apiError'
 
 const email = ref('')
 const password = ref('')
@@ -75,7 +76,7 @@ function handleSubmit() {
 
         <p v-if="validationError" class="text-sm text-red-500">{{ validationError }}</p>
         <p v-else-if="isError" class="text-sm text-red-500">
-          {{ (error as any)?.response?.data?.message ?? 'Registration failed' }}
+          {{ getApiErrorMessage(error, 'Registration failed') }}
         </p>
 
         <Button
