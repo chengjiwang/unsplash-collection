@@ -46,7 +46,7 @@ Required env (`frontend/.env`): `VITE_API_BASE_URL` (e.g. `http://localhost:3001
 ### Frontend
 - Data flow: `src/api/*` (raw axios calls via shared `api/axios.ts` client) → `src/queries/*` (TanStack Query `useQuery`/`useMutation` composables) → views/components. Add new server interactions in that order.
 - Query keys: `['collections', params]`, `['collection', id]`, `['collectionImages', id]`. Mutations in `queries/mutations.ts` invalidate `['collections']` and show `vue-sonner` toasts.
-- Auth state: Pinia `authStore` persists `user` and `token` to `localStorage`; the axios request interceptor attaches `Bearer` token, and any 401 response clears the store and hard-redirects to `/login`. `isLoggedIn` is derived from the stored user (no `/me` check on boot).
+- Auth state: Pinia `authStore` persists `user` and `token` to `localStorage`; the axios request interceptor attaches `Bearer` token, and a 401 response from any non-`/api/auth/*` endpoint clears the store, clears the Query cache (`lib/queryClient.ts`) and `router.push`es to `/login?redirect=<current path>` (no full page reload). `/api/auth/*` 401s are skipped so the login form can show "Invalid credentials". `isLoggedIn` is derived from the stored user (no `/me` check on boot).
 - Router guard: routes with `meta.requiresAuth` redirect to `/login?redirect=<path>`; `useLogin` returns to `redirect` (default `/collections`).
 - UI primitives in `src/components/ui/` are shadcn-vue (reka-ui, new-york style) generated components — configured by `components.json`; prefer adding via shadcn-vue rather than hand-writing. Tailwind v4 config lives in `src/assets/main.css` (no tailwind.config). `@` aliases `src/`.
 - `vercel.json` rewrites all paths to `index.html` for SPA history routing.
