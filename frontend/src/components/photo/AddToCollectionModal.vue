@@ -67,6 +67,8 @@ const addMutation = useMutation({
     }),
   onSuccess: (_data, collection) => {
     queryClient.invalidateQueries({ queryKey: ['collections'] })
+    queryClient.invalidateQueries({ queryKey: ['collection', collection.id] })
+    queryClient.invalidateQueries({ queryKey: ['collectionImages', collection.id] })
     toast.success(`Added to "${collection.name}"`)
     emit('update:open', false)
   },
