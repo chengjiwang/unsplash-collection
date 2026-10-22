@@ -1,5 +1,8 @@
 export interface UnsplashPhoto {
   id: string
+  width: number
+  height: number
+  color: string | null
   urls: {
     regular: string
     thumb: string
