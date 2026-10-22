@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { login, logout, register } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
@@ -43,10 +43,13 @@ export const useRegister = () => {
 export const useLogout = () => {
   const authStore = useAuthStore()
   const router = useRouter()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
       authStore.logout()
+      // 有 staleTime 時快取不會自動 refetch，需清除以免下個帳號看到上個帳號的收藏
+      queryClient.clear()
       router.push('/login')
     },
   })

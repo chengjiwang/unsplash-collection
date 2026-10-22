@@ -1,4 +1,5 @@
 import { searchPhotos } from '@/api/unsplash'
+import { UNSPLASH_STALE_TIME } from '@/lib/queryClient'
 import { useInfiniteQuery } from '@tanstack/vue-query'
 import { computed, type Ref } from 'vue'
 
@@ -9,6 +10,7 @@ export const useSearchPhotos = (keyword: Ref<string>) => {
     getNextPageParam: (lastPage, _allPages, lastPageParam) =>
       lastPageParam < lastPage.total_pages ? lastPageParam + 1 : undefined,
     initialPageParam: 1,
+    staleTime: UNSPLASH_STALE_TIME,
     enabled: computed(() => keyword.value.trim().length > 0),
   })
 }
