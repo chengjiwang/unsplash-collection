@@ -4,6 +4,9 @@ import type { UnsplashPhoto } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Download, Plus } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import axios from 'axios'
+import { getApiErrorMessage } from '@/lib/apiError'
 
 const props = defineProps<{
   photo: UnsplashPhoto
@@ -23,6 +26,31 @@ const formattedDate = computed(() => {
   })
 })
 
+const EXTENSIONS: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
+  'image/gif': 'gif',
+}
+
+function getExtension(contentType: unknown): string {
+  const mime = typeof contentType === 'string' ? contentType.split(';')[0]?.trim() : ''
+  return (mime && EXTENSIONS[mime]) || 'jpg'
+}
+
+// responseType: 'blob' 時錯誤回應的 body 也是 Blob，需先解析成 JSON 才讀得到 `{ error }`
+async function parseBlobError(err: unknown): Promise<unknown> {
+  if (axios.isAxiosError(err) && err.response?.data instanceof Blob) {
+    try {
+      err.response.data = JSON.parse(await err.response.data.text())
+    } catch {
+      // 非 JSON body，保留原樣交給 fallback 訊息
+    }
+  }
+  return err
+}
+
 async function handleDownload() {
   if (isDownloading.value) return
   isDownloading.value = true
@@ -31,9 +59,12 @@ async function handleDownload() {
     const url = URL.createObjectURL(response.data)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${props.photo.id}.jpg`
+    a.download = `${props.photo.id}.${getExtension(response.headers['content-type'])}`
     a.click()
-    URL.revokeObjectURL(url)
+    // 延後釋放，避免部分瀏覽器尚未開始下載就失效
+    setTimeout(() => URL.revokeObjectURL(url), 0)
+  } catch (err) {
+    toast.error(getApiErrorMessage(await parseBlobError(err), 'Failed to download photo'))
   } finally {
     isDownloading.value = false
   }
