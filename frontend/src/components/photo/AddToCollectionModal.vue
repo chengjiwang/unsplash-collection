@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import type { Collection, UnsplashPhoto } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { Plus, Search } from 'lucide-vue-next'
+import { Plus, Search } from '@lucide/vue'
 import { computed, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 

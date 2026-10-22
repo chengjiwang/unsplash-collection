@@ -5,7 +5,7 @@ import ErrorState from '@/components/common/ErrorState.vue'
 import { Button } from '@/components/ui/button'
 import { getApiErrorMessage } from '@/lib/apiError'
 import { useCollections } from '@/queries/useCollections'
-import { Plus } from 'lucide-vue-next'
+import { Plus } from '@lucide/vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 

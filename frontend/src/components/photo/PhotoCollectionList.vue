@@ -2,7 +2,7 @@
 import { useRemoveImage } from '@/queries/mutations'
 import type { Collection } from '@/types'
 import { Button } from '@/components/ui/button'
-import { Minus } from 'lucide-vue-next'
+import { Minus } from '@lucide/vue'
 
 const props = defineProps<{
   photoId: string
