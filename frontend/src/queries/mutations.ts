@@ -21,8 +21,10 @@ export const useRemoveImage = () => {
   return useMutation({
     mutationFn: ({ collectionId, imageId }: { collectionId: string; imageId: string }) =>
       removeImageFromCollection(collectionId, imageId),
-    onSuccess: () => {
+    onSuccess: (_data, { collectionId }) => {
       queryClient.invalidateQueries({ queryKey: ['collections'] })
+      queryClient.invalidateQueries({ queryKey: ['collection', collectionId] })
+      queryClient.invalidateQueries({ queryKey: ['collectionImages', collectionId] })
       toast.success('Removed from collection')
     },
     onError: () => {

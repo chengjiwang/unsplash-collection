@@ -3,6 +3,16 @@ import { login, logout, register } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
 
+// 只接受站內絕對路徑；陣列、null、外部網址（`//`、`/\`）與登入頁都回退到預設頁
+const getSafeRedirect = (value: unknown) =>
+  typeof value === 'string' &&
+  value.startsWith('/') &&
+  !value.startsWith('//') &&
+  !value.startsWith('/\\') &&
+  !value.startsWith('/login')
+    ? value
+    : '/collections'
+
 export const useLogin = () => {
   const authStore = useAuthStore()
   const router = useRouter()
@@ -12,8 +22,7 @@ export const useLogin = () => {
       login(email, password).then((r) => r.data),
     onSuccess: (data) => {
       authStore.setAuth(data.user, data.token)
-      const redirect = (route.query.redirect as string) || '/collections'
-      router.push(redirect)
+      router.push(getSafeRedirect(route.query.redirect))
     },
   })
 }

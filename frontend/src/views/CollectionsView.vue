@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import CollectionCard from '@/components/collections/CollectionCard.vue'
 import AddCollectionModal from '@/components/collections/AddCollectionModal.vue'
+import ErrorState from '@/components/common/ErrorState.vue'
 import { Button } from '@/components/ui/button'
+import { getApiErrorMessage } from '@/lib/apiError'
 import { useCollections } from '@/queries/useCollections'
 import { Plus } from 'lucide-vue-next'
 import { ref } from 'vue'
@@ -9,7 +11,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const { data: collections, isLoading } = useCollections()
+const { data: collections, isLoading, isError, error, refetch } = useCollections()
 
 const showAddModal = ref(false)
 
@@ -50,6 +52,15 @@ function openAddModal() {
         class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
       />
     </div>
+
+    <!-- Error -->
+    <ErrorState
+      v-else-if="isError"
+      title="Couldn't load collections"
+      :message="getApiErrorMessage(error, 'Something went wrong. Please try again.')"
+    >
+      <Button variant="outline" @click="refetch()">Try again</Button>
+    </ErrorState>
 
     <!-- Grid -->
     <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

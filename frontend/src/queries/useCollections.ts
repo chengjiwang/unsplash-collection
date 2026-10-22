@@ -1,6 +1,6 @@
 import { getCollection, getCollectionImages, getCollections } from '@/api/collections'
 import { useQuery } from '@tanstack/vue-query'
-import { computed, type Ref } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export const useCollections = (
   params?: Ref<
@@ -11,10 +11,12 @@ export const useCollections = (
       }
     | undefined
   >,
+  options: { enabled?: MaybeRefOrGetter<boolean> } = {},
 ) =>
   useQuery({
     queryKey: computed(() => ['collections', params?.value]),
     queryFn: () => getCollections(params?.value).then((r) => r.data),
+    enabled: computed(() => toValue(options.enabled ?? true)),
   })
 
 export const useCollection = (collectionId: Ref<string>) =>

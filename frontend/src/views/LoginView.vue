@@ -3,10 +3,11 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLogin } from '@/queries/useAuth'
 import { Button } from '@/components/ui/button'
+import { getApiErrorMessage } from '@/lib/apiError'
 
 const email = ref('')
 const password = ref('')
-const { mutate: login, isPending, isError } = useLogin()
+const { mutate: login, isPending, isError, error } = useLogin()
 
 function handleSubmit() {
   if (!email.value || !password.value) return
@@ -52,7 +53,9 @@ function handleGuestLogin() {
           />
         </div>
 
-        <p v-if="isError" class="text-sm text-red-500">Invalid credentials</p>
+        <p v-if="isError" class="text-sm text-red-500">
+          {{ getApiErrorMessage(error, 'Login failed') }}
+        </p>
 
         <Button
           type="submit"
