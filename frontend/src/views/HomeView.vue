@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import gradientBg from '@/assets/images/gradiend-bg.svg'
 import heroLeft from '@/assets/images/hero-left.png'
 import heroRight from '@/assets/images/hero-right.png'
 import PhotoGrid from '@/components/search/PhotoGrid.vue'
@@ -50,8 +49,7 @@ const { keyword } = storeToRefs(searchStore)
   <!-- RESULT STATE: gradient banner + photo grid -->
   <div v-else>
     <!-- Gradient banner with search bar overlapping bottom edge -->
-    <div class="relative h-20 w-full">
-      <img :src="gradientBg" alt="" class="h-full w-full object-cover" aria-hidden="true" />
+    <div class="relative h-20 w-full bg-brand-banner">
       <div class="absolute bottom-0 left-1/2 w-full max-w-lg -translate-x-1/2 translate-y-1/2 px-6">
         <SearchBar />
       </div>
