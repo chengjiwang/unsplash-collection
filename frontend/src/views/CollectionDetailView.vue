@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vue'
+import ErrorState from '@/components/common/ErrorState.vue'
 import { Button } from '@/components/ui/button'
+import { getApiErrorMessage } from '@/lib/apiError'
 import { useCollection, useCollectionImages } from '@/queries/useCollections'
+import axios from 'axios'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -10,11 +13,33 @@ const router = useRouter()
 
 const collectionId = computed(() => String(route.params['id'] ?? ''))
 
-const { data: selectedCollection, isLoading: collectionLoading } = useCollection(collectionId)
+const {
+  data: selectedCollection,
+  isLoading: collectionLoading,
+  error: collectionError,
+  refetch: refetchCollection,
+} = useCollection(collectionId)
 
-const { data: images, isLoading: imagesLoading } = useCollectionImages(collectionId)
+const {
+  data: images,
+  isLoading: imagesLoading,
+  error: imagesError,
+  refetch: refetchImages,
+} = useCollectionImages(collectionId)
 
 const isLoading = computed(() => collectionLoading.value || imagesLoading.value)
+
+const error = computed(() => collectionError.value ?? imagesError.value)
+
+// Backend returns 404 both for a missing collection and one owned by another user
+const isNotFound = computed(
+  () => axios.isAxiosError(error.value) && error.value.response?.status === 404,
+)
+
+function retry() {
+  refetchCollection()
+  refetchImages()
+}
 
 function backToList() {
   router.push('/collections')
@@ -37,6 +62,18 @@ function backToList() {
         class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
       />
     </div>
+    <ErrorState
+      v-else-if="isNotFound"
+      title="Collection not found"
+      message="This collection doesn't exist or you don't have access to it."
+    />
+    <ErrorState
+      v-else-if="error"
+      title="Couldn't load this collection"
+      :message="getApiErrorMessage(error, 'Something went wrong. Please try again.')"
+    >
+      <Button variant="outline" @click="retry">Try again</Button>
+    </ErrorState>
     <div v-else>
       <div v-if="selectedCollection" class="mb-8 text-center">
         <h1
