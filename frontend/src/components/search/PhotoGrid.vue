@@ -54,8 +54,12 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <img
           :src="photo.urls.small"
           :alt="photo.alt_description ?? photo.description ?? 'Unsplash photo'"
-          class="w-full object-cover"
+          :width="photo.width"
+          :height="photo.height"
+          :style="{ backgroundColor: photo.color ?? undefined }"
+          class="h-auto w-full object-cover"
           loading="lazy"
+          decoding="async"
         />
       </div>
     </div>

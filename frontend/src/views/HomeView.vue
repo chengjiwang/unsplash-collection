@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import gradientBg from '@/assets/images/gradiend-bg.svg'
-import heroLeft from '@/assets/images/hero-left.png'
-import heroRight from '@/assets/images/hero-right.png'
+import heroLeft from '@/assets/images/hero-left.webp'
+import heroRight from '@/assets/images/hero-right.webp'
 import PhotoGrid from '@/components/search/PhotoGrid.vue'
 import SearchBar from '@/components/search/SearchBar.vue'
 import { useSearchStore } from '@/stores/searchStore'
@@ -17,25 +16,15 @@ const { keyword } = storeToRefs(searchStore)
     v-if="!keyword"
     class="relative flex min-h-[calc(100vh-57px)] items-center justify-center overflow-hidden"
   >
-    <!-- Left decorative image -->
-    <div class="absolute left-0 top-0 hidden h-full overflow-hidden md:block md:w-55 xl:w-85">
-      <img
-        :src="heroLeft"
-        alt="heroLeft"
-        class="h-full w-full object-cover object-right"
-        aria-hidden="true"
-      />
-    </div>
-
-    <!-- Right decorative image -->
-    <div class="absolute right-0 top-0 hidden h-full overflow-hidden md:block md:w-55 xl:w-85">
-      <img
-        :src="heroRight"
-        alt="heroRight"
-        class="h-full w-full object-cover object-left"
-        aria-hidden="true"
-      />
-    </div>
+    <!-- Decorative side images: CSS backgrounds so they aren't downloaded while hidden on mobile -->
+    <div
+      class="absolute left-0 top-0 hidden h-full bg-cover bg-right md:block md:w-55 xl:w-85"
+      :style="{ backgroundImage: `url(${heroLeft})` }"
+    />
+    <div
+      class="absolute right-0 top-0 hidden h-full bg-cover bg-left md:block md:w-55 xl:w-85"
+      :style="{ backgroundImage: `url(${heroRight})` }"
+    />
 
     <!-- Center search content -->
     <div class="relative z-10 w-sm md:w-lg px-4 flex flex-col items-center gap-5 text-center">
@@ -50,8 +39,7 @@ const { keyword } = storeToRefs(searchStore)
   <!-- RESULT STATE: gradient banner + photo grid -->
   <div v-else>
     <!-- Gradient banner with search bar overlapping bottom edge -->
-    <div class="relative h-20 w-full">
-      <img :src="gradientBg" alt="" class="h-full w-full object-cover" aria-hidden="true" />
+    <div class="relative h-20 w-full bg-brand-banner">
       <div class="absolute bottom-0 left-1/2 w-full max-w-lg -translate-x-1/2 translate-y-1/2 px-6">
         <SearchBar />
       </div>
