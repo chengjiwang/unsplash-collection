@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/searchStore'
 import { Button } from '@/components/ui/button'
-import { Search } from 'lucide-vue-next'
+import { Search } from '@lucide/vue'
 import { ref } from 'vue'
 
 const searchStore = useSearchStore()

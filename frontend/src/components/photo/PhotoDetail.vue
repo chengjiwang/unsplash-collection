@@ -2,7 +2,7 @@
 import { downloadPhotoById } from '@/api/unsplash'
 import type { UnsplashPhoto } from '@/types'
 import { Button } from '@/components/ui/button'
-import { Download, Plus } from 'lucide-vue-next'
+import { Download, Plus } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import axios from 'axios'
