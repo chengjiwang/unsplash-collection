@@ -8,12 +8,12 @@ Frontend-specific notes. Commands, env vars, and the overall data-flow / auth / 
 
 - `pnpm test:unit` starts Vitest in **watch mode**; use `pnpm test:unit --run` for a one-shot run.
 - `pnpm lint` runs with `--fix` and rewrites files; there is no check-only lint script.
-- The only test, `src/__tests__/App.spec.ts`, is leftover Vite scaffold (it expects `"You did it!"`) and currently fails. `App.vue` needs Pinia, router and `VueQueryPlugin` installed to mount, so a real test must provide those plugins via `global.plugins`.
+- Tests live in `src/__tests__/` (the only path `tsconfig.vitest.json` includes) and cover pure logic: `authStore`, the axios interceptors, the router guard, `getApiErrorMessage` and `getSafeRedirect` (`lib/redirect.ts`). The axios test swaps `apiClient.defaults.adapter` for a fake and `vi.mock`s `@/router`; the router test `vi.mock`s every view. There are no component tests yet. Mounting `App.vue` would need Pinia, the router and `VueQueryPlugin` passed through `global.plugins`.
 - `tsconfig.app.json` turns on `noUncheckedIndexedAccess`, so array/record indexing returns `T | undefined` (hence patterns like `preview_images[0]?.` and `route.params['id']`). Test files are excluded from the app tsconfig and covered by `tsconfig.vitest.json`.
 
 ## State split
 
-- **Pinia is for UI state only.** `searchStore.keyword` is the single source of truth for search: `SearchBar` writes it on Enter or button click, `HomeView` switches between the hero layout (empty keyword) and the results layout (non-empty), and `PhotoGrid` passes it to `useSearchPhotos`. Because the keyword lives in a store rather than the URL, navigating back from a photo keeps the results. `stores/counter.ts` is unused scaffold.
+- **Pinia is for UI state only.** `searchStore.keyword` is the single source of truth for search: `SearchBar` writes it on Enter or button click, `HomeView` switches between the hero layout (empty keyword) and the results layout (non-empty), and `PhotoGrid` passes it to `useSearchPhotos`. Because the keyword lives in a store rather than the URL, navigating back from a photo keeps the results.
 - **Server state goes through TanStack Query.** Query composables take `Ref`s and build `queryKey` / `enabled` with `computed`, so they refetch reactively. Follow the same pattern for new queries.
 - Search uses `useInfiniteQuery` (key `['photos', keyword]`) together with a `useIntersectionObserver` sentinel at the bottom of `PhotoGrid` for infinite scroll. Photo detail uses `['photo', id]`.
 
