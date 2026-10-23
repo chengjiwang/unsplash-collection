@@ -30,7 +30,7 @@ Frontend-specific notes. Commands, env vars, and the overall data-flow / auth / 
 ## UI conventions
 
 - **Colors:** use the brand tokens defined in `src/assets/main.css` (`text-brand-ink`, `text-brand-muted`, `bg-brand-border`, `hover:bg-brand-hover`, `from-brand-gradient-from to-brand-gradient-to`) instead of raw hex or gray utilities. Page titles use the gradient-text pattern `bg-linear-to-r … bg-clip-text text-transparent`.
-- **Shared pieces:** spinners and skeletons are inline Tailwind (`animate-spin` / `animate-pulse`); there's no shared loader component. Toasts go through `toast` from `vue-sonner`, and the `<Toaster>` is mounted once in `App.vue`.
+- **Shared pieces:** loading spinners use `components/common/LoadingSpinner.vue` (`size="sm" | "md"`; the caller provides the centering wrapper). Skeletons are still inline `animate-pulse`. Toasts go through `toast` from `vue-sonner`, and the `<Toaster>` is mounted once in `App.vue`.
 - **Dialogs:** controlled with `v-model:open`. Newer components use `defineModel('open')` (`AddCollectionModal`); the older ones use a prop plus an `update:open` emit (`AddToCollectionModal`). Prefer `defineModel` going forward.
 - **Buttons and icons:** buttons use the shadcn `Button` with a `variant` and heavy class overrides. Icons come from `@lucide/vue`.
 - **Design references:** the design mockups and color palette for each page are in `../resources/image/`. `../resources/SPEC-Frontend.md` (page specs and interaction flows) and `../resources/explain-frontend.md` (a Vue-vs-React walkthrough) are written in Chinese.

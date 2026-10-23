@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vue'
 import ErrorState from '@/components/common/ErrorState.vue'
 import { Button } from '@/components/ui/button'
@@ -58,9 +59,7 @@ function backToList() {
       </Button>
     </div>
     <div v-if="isLoading" class="flex justify-center pt-20">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
-      />
+      <LoadingSpinner />
     </div>
     <ErrorState
       v-else-if="isNotFound"

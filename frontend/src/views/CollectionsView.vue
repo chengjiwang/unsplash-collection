@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import CollectionCard from '@/components/collections/CollectionCard.vue'
 import AddCollectionModal from '@/components/collections/AddCollectionModal.vue'
 import ErrorState from '@/components/common/ErrorState.vue'
@@ -48,9 +49,7 @@ function openAddModal() {
 
     <!-- Loading -->
     <div v-if="isLoading" class="flex justify-center pt-20">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
-      />
+      <LoadingSpinner />
     </div>
 
     <!-- Error -->
