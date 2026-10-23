@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useAddImageToCollection } from '@/queries/mutations'
 import { useCollections } from '@/queries/useCollections'
 import type { Collection, UnsplashPhoto } from '@/types'
@@ -62,14 +63,16 @@ function addTo(collection: Collection) {
 
       <!-- Search input -->
       <div class="px-6 pb-3">
-        <div class="flex items-center gap-2 rounded-md border border-brand-border px-3 py-2">
-          <input
+        <div class="relative">
+          <Input
             v-model="searchTerm"
             type="text"
             placeholder="Search collections..."
-            class="w-full bg-transparent text-sm text-brand-ink placeholder:text-brand-muted outline-none"
+            class="pr-9"
           />
-          <Search class="h-4 w-4 shrink-0 text-brand-muted" />
+          <Search
+            class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted"
+          />
         </div>
         <p class="mt-2 text-xs text-brand-muted">
           <template v-if="isFetching">Searching...</template>

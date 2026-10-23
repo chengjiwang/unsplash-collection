@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/searchStore'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Search } from '@lucide/vue'
 import { ref } from 'vue'
 
@@ -16,11 +17,11 @@ function onSearch() {
 
 <template>
   <div class="relative w-full">
-    <input
+    <Input
       v-model="inputValue"
       type="text"
       placeholder="Enter your keywords..."
-      class="w-full rounded-md border border-brand-border bg-white px-5 py-3 pr-12 text-sm text-brand-ink shadow-sm placeholder:text-brand-muted focus:outline-none focus:ring-1 focus:ring-brand-border"
+      class="bg-white px-5 py-3 pr-12 shadow-sm"
       @keyup.enter="onSearch"
     />
     <Button
