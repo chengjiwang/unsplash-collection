@@ -1,5 +1,5 @@
 import { getCollection, getCollectionImages, getCollections } from '@/api/collections'
-import { useQuery } from '@tanstack/vue-query'
+import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export const useCollections = (
@@ -11,12 +11,14 @@ export const useCollections = (
       }
     | undefined
   >,
-  options: { enabled?: MaybeRefOrGetter<boolean> } = {},
+  options: { enabled?: MaybeRefOrGetter<boolean>; keepPreviousData?: boolean } = {},
 ) =>
   useQuery({
     queryKey: computed(() => ['collections', params?.value]),
     queryFn: () => getCollections(params?.value).then((r) => r.data),
     enabled: computed(() => toValue(options.enabled ?? true)),
+    // 篩選條件變動時保留上一筆結果，避免列表閃成空狀態
+    placeholderData: options.keepPreviousData ? keepPreviousData : undefined,
   })
 
 export const useCollection = (collectionId: Ref<string>) =>

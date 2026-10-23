@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { addImageToCollection, getCollections } from '@/api/collections'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { useAddImageToCollection } from '@/queries/mutations'
+import { useCollections } from '@/queries/useCollections'
 import type { Collection, UnsplashPhoto } from '@/types'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { Plus, Search } from '@lucide/vue'
+import { refDebounced } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
-import { toast } from 'vue-sonner'
 
 const props = defineProps<{
   open: boolean
@@ -17,69 +17,40 @@ const emit = defineEmits<{
   'update:open': [value: boolean]
 }>()
 
-const queryClient = useQueryClient()
 const searchTerm = ref('')
-const collections = ref<Collection[]>([])
-const isLoading = ref(false)
+const debouncedTerm = refDebounced(searchTerm, 300)
 
-// Fetch collections with name filter and exclude_image_id
-async function fetchCollections(term: string) {
-  isLoading.value = true
-  try {
-    const res = await getCollections({
-      name: term || undefined,
-      exclude_image_id: props.photo.id,
-    })
-    collections.value = res.data
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Trigger fetch when modal opens or search term changes
+// 關窗時重置，下次開啟時 debounce 已穩定為空字串，不會多打一次請求
 watch(
   () => props.open,
   (open) => {
-    if (open) {
-      searchTerm.value = ''
-      fetchCollections('')
-    }
+    if (!open) searchTerm.value = ''
   },
 )
 
-let debounceTimer: ReturnType<typeof setTimeout>
-watch(searchTerm, (val) => {
-  clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => fetchCollections(val), 300)
+const params = computed(() => ({
+  name: debouncedTerm.value.trim() || undefined,
+  exclude_image_id: props.photo.id,
+}))
+
+const { data, isFetching, isError, refetch } = useCollections(params, {
+  enabled: () => props.open,
+  keepPreviousData: true,
 })
 
+const collections = computed(() => data.value ?? [])
 const matchCount = computed(() => collections.value.length)
 
-const addMutation = useMutation({
-  mutationFn: (collection: Collection) =>
-    addImageToCollection(collection.id, {
-      image_id: props.photo.id,
-      image_url: props.photo.urls.regular,
-      thumb_url: props.photo.urls.thumb,
-      small_url: props.photo.urls.small,
-      author_name: props.photo.user.name,
-      published_at: props.photo.created_at,
-    }),
-  onSuccess: (_data, collection) => {
-    queryClient.invalidateQueries({ queryKey: ['collections'] })
-    queryClient.invalidateQueries({ queryKey: ['collection', collection.id] })
-    queryClient.invalidateQueries({ queryKey: ['collectionImages', collection.id] })
-    toast.success(`Added to "${collection.name}"`)
-    emit('update:open', false)
-  },
-  onError: () => {
-    toast.error('Failed to add. Please try again.')
-  },
-})
+const { mutate: addImage, isPending: isAdding, variables: addVariables } = useAddImageToCollection()
 
-const addingCollectionId = computed<string | undefined>(
-  () => (addMutation.variables as unknown as Collection | undefined)?.id,
+// 只有正在送出的那一筆顯示 Adding...（失敗後 variables 仍保留，需搭配 isPending 判斷）
+const addingCollectionId = computed(() =>
+  isAdding.value ? addVariables.value?.collection.id : undefined,
 )
+
+function addTo(collection: Collection) {
+  addImage({ collection, photo: props.photo }, { onSuccess: () => emit('update:open', false) })
+}
 </script>
 
 <template>
@@ -101,7 +72,13 @@ const addingCollectionId = computed<string | undefined>(
           <Search class="h-4 w-4 shrink-0 text-brand-muted" />
         </div>
         <p class="mt-2 text-xs text-brand-muted">
-          <template v-if="isLoading">Searching...</template>
+          <template v-if="isFetching">Searching...</template>
+          <template v-else-if="isError">
+            Failed to load collections.
+            <button type="button" class="underline hover:text-brand-ink" @click="refetch()">
+              Retry
+            </button>
+          </template>
           <template v-else>{{ matchCount }} matches</template>
         </p>
       </div>
@@ -135,23 +112,21 @@ const addingCollectionId = computed<string | undefined>(
             size="sm"
             class="flex items-center gap-1 text-xs text-brand-muted opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
             :class="{
-              'opacity-100': addMutation.isPending && addingCollectionId === collection.id,
+              'opacity-100': addingCollectionId === collection.id,
             }"
-            :disabled="addMutation.isPending && addingCollectionId === collection.id"
-            @click="addMutation.mutate(collection)"
+            :disabled="addingCollectionId === collection.id"
+            @click="addTo(collection)"
           >
             <Plus class="h-3.5 w-3.5" />
             <span class="text-brand-ink">{{
-              addMutation.isPending && addingCollectionId === collection.id
-                ? 'Adding...'
-                : 'Add to Collection'
+              addingCollectionId === collection.id ? 'Adding...' : 'Add to Collection'
             }}</span>
           </Button>
         </li>
 
         <!-- Empty state -->
         <li
-          v-if="!isLoading && collections.length === 0"
+          v-if="!isFetching && !isError && collections.length === 0"
           class="px-3 py-4 text-center text-sm text-brand-muted"
         >
           No collections found.
