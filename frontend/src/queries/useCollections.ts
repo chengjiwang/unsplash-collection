@@ -1,16 +1,10 @@
 import { getCollection, getCollectionImages, getCollections } from '@/api/collections'
+import type { CollectionQueryParams } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export const useCollections = (
-  params?: Ref<
-    | {
-        image_id?: string
-        name?: string
-        exclude_image_id?: string
-      }
-    | undefined
-  >,
+  params?: Ref<CollectionQueryParams | undefined>,
   options: { enabled?: MaybeRefOrGetter<boolean>; keepPreviousData?: boolean } = {},
 ) =>
   useQuery({
