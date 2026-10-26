@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRemoveImage } from '@/queries/mutations'
 import type { Collection } from '@/types'
 import CollectionListItem from '@/components/collections/CollectionListItem.vue'
@@ -11,7 +12,12 @@ const props = defineProps<{
   isLoading: boolean
 }>()
 
-const { mutate, isPending } = useRemoveImage()
+const { mutate, isPending, variables } = useRemoveImage()
+
+// 只停用正在移除的那一列（失敗後 variables 仍保留，需搭配 isPending 判斷）
+const removingCollectionId = computed(() =>
+  isPending.value ? variables.value?.collectionId : undefined,
+)
 
 function handleRemove(collectionId: string) {
   mutate({ collectionId, imageId: props.photoId })
@@ -52,7 +58,7 @@ function handleRemove(collectionId: string) {
             variant="ghost"
             size="sm"
             class="flex items-center gap-1 text-xs text-brand-ink opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
-            :disabled="isPending"
+            :disabled="removingCollectionId === collection.id"
             @click="handleRemove(collection.id)"
           >
             <Minus class="h-3.5 w-3.5" />
