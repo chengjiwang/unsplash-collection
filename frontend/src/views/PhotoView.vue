@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import AddToCollectionModal from '@/components/photo/AddToCollectionModal.vue'
 import PhotoCollectionList from '@/components/photo/PhotoCollectionList.vue'
 import PhotoDetail from '@/components/photo/PhotoDetail.vue'
@@ -40,9 +41,7 @@ function goBack() {
   <div class="mx-auto max-w-7xl px-6 py-10">
     <!-- Loading -->
     <div v-if="photoLoading" class="flex h-96 items-center justify-center">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
-      />
+      <LoadingSpinner />
     </div>
 
     <!-- Error -->

@@ -30,6 +30,12 @@ export interface Collection {
   preview_images: { thumb_url: string; small_url: string }[]
 }
 
+export interface CollectionQueryParams {
+  image_id?: string
+  name?: string
+  exclude_image_id?: string
+}
+
 export type CollectionDetail = Omit<Collection, 'preview_images'>
 
 export interface CollectionImage {

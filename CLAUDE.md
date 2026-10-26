@@ -27,7 +27,7 @@ Required env (`backend/.env`): `DATABASE_URL`, `JWT_SECRET`, `UNSPLASH_ACCESS_KE
 - `pnpm type-check`
 - `pnpm lint` — oxlint then eslint (both with `--fix`)
 - `pnpm format` — prettier on `src/`
-- `pnpm test:unit` — Vitest (jsdom); single file: `pnpm test:unit src/__tests__/App.spec.ts`; single test: add `-t "<name>"`
+- `pnpm test:unit` — Vitest (jsdom); single file: `pnpm test:unit src/__tests__/authStore.spec.ts`; single test: add `-t "<name>"`
 
 Required env (`frontend/.env`): `VITE_API_BASE_URL` (e.g. `http://localhost:3001`).
 

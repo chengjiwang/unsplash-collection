@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRemoveImage } from '@/queries/mutations'
 import type { Collection } from '@/types'
+import CollectionListItem from '@/components/collections/CollectionListItem.vue'
 import { Button } from '@/components/ui/button'
 import { Minus } from '@lucide/vue'
 
@@ -10,7 +12,12 @@ const props = defineProps<{
   isLoading: boolean
 }>()
 
-const { mutate, isPending } = useRemoveImage()
+const { mutate, isPending, variables } = useRemoveImage()
+
+// 只停用正在移除的那一列（失敗後 variables 仍保留，需搭配 isPending 判斷）
+const removingCollectionId = computed(() =>
+  isPending.value ? variables.value?.collectionId : undefined,
+)
 
 function handleRemove(collectionId: string) {
   mutate({ collectionId, imageId: props.photoId })
@@ -40,39 +47,25 @@ function handleRemove(collectionId: string) {
     </ul>
 
     <ul v-else-if="collections.length > 0" class="flex flex-col gap-1">
-      <li
+      <CollectionListItem
         v-for="collection in collections"
         :key="collection.id"
-        class="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-brand-hover"
+        :collection="collection"
       >
-        <!-- Preview thumbnail -->
-        <div class="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-brand-border">
-          <img
-            v-if="collection.preview_images[0]"
-            :src="collection.preview_images[0].thumb_url"
-            :alt="collection.name"
-            class="h-full w-full object-cover"
-          />
-        </div>
-
-        <!-- Name + count -->
-        <div class="flex flex-1 flex-col">
-          <span class="text-sm font-medium text-brand-ink">{{ collection.name }}</span>
-          <span class="text-xs text-brand-muted">{{ collection.image_count }} photos</span>
-        </div>
-
         <!-- Remove button (visible on hover) -->
-        <Button
-          variant="ghost"
-          size="sm"
-          class="flex items-center gap-1 text-xs text-brand-ink opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
-          :disabled="isPending"
-          @click="handleRemove(collection.id)"
-        >
-          <Minus class="h-3.5 w-3.5" />
-          Remove
-        </Button>
-      </li>
+        <template #action>
+          <Button
+            variant="ghost"
+            size="sm"
+            class="flex items-center gap-1 text-xs text-brand-ink opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
+            :disabled="removingCollectionId === collection.id"
+            @click="handleRemove(collection.id)"
+          >
+            <Minus class="h-3.5 w-3.5" />
+            Remove
+          </Button>
+        </template>
+      </CollectionListItem>
     </ul>
 
     <p v-else class="text-sm text-brand-muted">Not in any collection yet.</p>

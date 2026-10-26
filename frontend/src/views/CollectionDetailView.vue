@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vue'
 import ErrorState from '@/components/common/ErrorState.vue'
+import PageTitle from '@/components/common/PageTitle.vue'
 import { Button } from '@/components/ui/button'
 import { getApiErrorMessage } from '@/lib/apiError'
+import { formatPhotoCount } from '@/lib/format'
 import { useCollection, useCollectionImages } from '@/queries/useCollections'
 import axios from 'axios'
 import { computed } from 'vue'
@@ -58,9 +61,7 @@ function backToList() {
       </Button>
     </div>
     <div v-if="isLoading" class="flex justify-center pt-20">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
-      />
+      <LoadingSpinner />
     </div>
     <ErrorState
       v-else-if="isNotFound"
@@ -76,17 +77,9 @@ function backToList() {
     </ErrorState>
     <div v-else>
       <div v-if="selectedCollection" class="mb-8 text-center">
-        <h1
-          class="bg-linear-to-r from-brand-gradient-from to-brand-gradient-to bg-clip-text text-4xl font-bold text-transparent"
-        >
-          {{ selectedCollection.name }}
-        </h1>
+        <PageTitle>{{ selectedCollection.name }}</PageTitle>
         <p class="mt-2 text-brand-muted">
-          {{
-            selectedCollection.image_count === 1
-              ? '1 photo'
-              : `${selectedCollection.image_count} photos`
-          }}
+          {{ formatPhotoCount(selectedCollection.image_count) }}
         </p>
       </div>
 

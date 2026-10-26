@@ -2,16 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { login, logout, register } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
-
-// 只接受站內絕對路徑；陣列、null、外部網址（`//`、`/\`）與登入頁都回退到預設頁
-const getSafeRedirect = (value: unknown) =>
-  typeof value === 'string' &&
-  value.startsWith('/') &&
-  !value.startsWith('//') &&
-  !value.startsWith('/\\') &&
-  !value.startsWith('/login')
-    ? value
-    : '/collections'
+import { getSafeRedirect } from '@/lib/redirect'
 
 export const useLogin = () => {
   const authStore = useAuthStore()
