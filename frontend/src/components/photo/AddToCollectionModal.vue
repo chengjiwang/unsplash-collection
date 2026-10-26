@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CollectionListItem from '@/components/collections/CollectionListItem.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -88,44 +89,30 @@ function addTo(collection: Collection) {
 
       <!-- Collection list -->
       <ul class="max-h-72 overflow-y-auto px-3 pb-2">
-        <li
+        <CollectionListItem
           v-for="collection in collections"
           :key="collection.id"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-brand-hover"
+          :collection="collection"
         >
-          <!-- Thumbnail -->
-          <div class="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-brand-border">
-            <img
-              v-if="collection.preview_images[0]"
-              :src="collection.preview_images[0].thumb_url"
-              :alt="collection.name"
-              class="h-full w-full object-cover"
-            />
-          </div>
-
-          <!-- Name + count -->
-          <div class="flex flex-1 flex-col">
-            <span class="text-sm font-medium text-brand-ink">{{ collection.name }}</span>
-            <span class="text-xs text-brand-muted">{{ collection.image_count }} photos</span>
-          </div>
-
           <!-- Add button (visible on hover) -->
-          <Button
-            variant="ghost"
-            size="sm"
-            class="flex items-center gap-1 text-xs text-brand-muted opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
-            :class="{
-              'opacity-100': addingCollectionId === collection.id,
-            }"
-            :disabled="addingCollectionId === collection.id"
-            @click="addTo(collection)"
-          >
-            <Plus class="h-3.5 w-3.5" />
-            <span class="text-brand-ink">{{
-              addingCollectionId === collection.id ? 'Adding...' : 'Add to Collection'
-            }}</span>
-          </Button>
-        </li>
+          <template #action>
+            <Button
+              variant="ghost"
+              size="sm"
+              class="flex items-center gap-1 text-xs text-brand-muted opacity-0 transition-opacity group-hover:opacity-100 h-auto p-2"
+              :class="{
+                'opacity-100': addingCollectionId === collection.id,
+              }"
+              :disabled="addingCollectionId === collection.id"
+              @click="addTo(collection)"
+            >
+              <Plus class="h-3.5 w-3.5" />
+              <span class="text-brand-ink">{{
+                addingCollectionId === collection.id ? 'Adding...' : 'Add to Collection'
+              }}</span>
+            </Button>
+          </template>
+        </CollectionListItem>
 
         <!-- Empty state -->
         <li
