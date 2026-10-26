@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatPhotoCount } from '@/lib/format'
 import type { Collection } from '@/types'
 
 defineProps<{
@@ -99,7 +100,7 @@ defineEmits<{
     <div class="px-3 py-3">
       <p class="truncate font-medium text-brand-ink">{{ collection.name }}</p>
       <p class="text-sm text-brand-muted">
-        {{ collection.image_count }} {{ collection.image_count === 1 ? 'photo' : 'photos' }}
+        {{ formatPhotoCount(collection.image_count) }}
       </p>
     </div>
   </div>

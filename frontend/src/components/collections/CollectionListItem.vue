@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatPhotoCount } from '@/lib/format'
 import type { Collection } from '@/types'
 
 defineProps<{
@@ -23,7 +24,7 @@ defineProps<{
     <!-- Name + count -->
     <div class="flex flex-1 flex-col">
       <span class="text-sm font-medium text-brand-ink">{{ collection.name }}</span>
-      <span class="text-xs text-brand-muted">{{ collection.image_count }} photos</span>
+      <span class="text-xs text-brand-muted">{{ formatPhotoCount(collection.image_count) }}</span>
     </div>
 
     <!-- 動作按鈕（父層需自行加上 hover 顯示樣式，li 已帶 group） -->

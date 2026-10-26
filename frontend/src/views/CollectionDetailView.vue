@@ -4,6 +4,7 @@ import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vu
 import ErrorState from '@/components/common/ErrorState.vue'
 import { Button } from '@/components/ui/button'
 import { getApiErrorMessage } from '@/lib/apiError'
+import { formatPhotoCount } from '@/lib/format'
 import { useCollection, useCollectionImages } from '@/queries/useCollections'
 import axios from 'axios'
 import { computed } from 'vue'
@@ -81,11 +82,7 @@ function backToList() {
           {{ selectedCollection.name }}
         </h1>
         <p class="mt-2 text-brand-muted">
-          {{
-            selectedCollection.image_count === 1
-              ? '1 photo'
-              : `${selectedCollection.image_count} photos`
-          }}
+          {{ formatPhotoCount(selectedCollection.image_count) }}
         </p>
       </div>
 
