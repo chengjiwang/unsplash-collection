@@ -3,6 +3,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import CollectionCard from '@/components/collections/CollectionCard.vue'
 import AddCollectionModal from '@/components/collections/AddCollectionModal.vue'
 import ErrorState from '@/components/common/ErrorState.vue'
+import PageTitle from '@/components/common/PageTitle.vue'
 import { Button } from '@/components/ui/button'
 import { getApiErrorMessage } from '@/lib/apiError'
 import { useCollections } from '@/queries/useCollections'
@@ -29,11 +30,7 @@ function openAddModal() {
   <div class="mx-auto max-w-7xl px-6 py-10">
     <!-- Header -->
     <div class="mb-10 text-center">
-      <h1
-        class="bg-linear-to-r from-brand-gradient-from to-brand-gradient-to bg-clip-text text-4xl font-bold text-transparent"
-      >
-        Collections
-      </h1>
+      <PageTitle>Collections</PageTitle>
       <p class="mt-3 text-brand-muted">
         Explore the world through collections of beautiful<br />
         photos free to use under the

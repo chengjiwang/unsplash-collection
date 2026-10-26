@@ -2,6 +2,7 @@
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import CollectionImageGrid from '@/components/collections/CollectionImageGrid.vue'
 import ErrorState from '@/components/common/ErrorState.vue'
+import PageTitle from '@/components/common/PageTitle.vue'
 import { Button } from '@/components/ui/button'
 import { getApiErrorMessage } from '@/lib/apiError'
 import { formatPhotoCount } from '@/lib/format'
@@ -76,11 +77,7 @@ function backToList() {
     </ErrorState>
     <div v-else>
       <div v-if="selectedCollection" class="mb-8 text-center">
-        <h1
-          class="bg-linear-to-r from-brand-gradient-from to-brand-gradient-to bg-clip-text text-4xl font-bold text-transparent"
-        >
-          {{ selectedCollection.name }}
-        </h1>
+        <PageTitle>{{ selectedCollection.name }}</PageTitle>
         <p class="mt-2 text-brand-muted">
           {{ formatPhotoCount(selectedCollection.image_count) }}
         </p>
