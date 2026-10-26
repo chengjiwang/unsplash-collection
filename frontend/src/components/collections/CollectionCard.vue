@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { formatPhotoCount } from '@/lib/format'
 import type { Collection } from '@/types'
+import { computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   collection: Collection
 }>()
+
+// 依預覽圖數量決定拼貼版面：1 張滿版、2 張對半、3 張為左大右二
+const LAYOUTS: Record<number, { grid: string; tiles: string[] }> = {
+  1: { grid: 'grid-cols-1 grid-rows-1', tiles: [] },
+  2: { grid: 'grid-cols-2 grid-rows-1', tiles: [] },
+  3: { grid: 'grid-cols-3 grid-rows-2', tiles: ['col-span-2 row-span-2'] },
+}
+
+const previewImages = computed(() => props.collection.preview_images.slice(0, 3))
+const layout = computed(() => LAYOUTS[previewImages.value.length] ?? LAYOUTS[1]!)
 
 defineEmits<{
   click: []
@@ -18,82 +29,27 @@ defineEmits<{
   >
     <!-- Preview images mosaic -->
     <div class="relative h-48 w-full overflow-hidden bg-brand-border rounded-md">
-      <!-- 3+ images: large left + 2 stacked right -->
-      <template v-if="collection.preview_images.length >= 3">
-        <div class="flex h-full gap-0.5">
-          <div class="h-full w-2/3 overflow-hidden">
-            <img
-              :src="collection.preview_images[0]?.small_url"
-              :alt="collection.name"
-              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="flex h-full w-1/3 flex-col gap-0.5">
-            <div class="h-1/2 overflow-hidden">
-              <img
-                :src="collection.preview_images[1]?.small_url"
-                :alt="collection.name"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div class="h-1/2 overflow-hidden">
-              <img
-                :src="collection.preview_images[2]?.small_url"
-                :alt="collection.name"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </div>
+      <div v-if="previewImages.length > 0" class="grid h-full gap-0.5" :class="layout.grid">
+        <div
+          v-for="(image, index) in previewImages"
+          :key="index"
+          class="overflow-hidden"
+          :class="layout.tiles[index]"
+        >
+          <img
+            :src="image.small_url"
+            :alt="collection.name"
+            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
-      </template>
-
-      <!-- 2 images: equal halves -->
-      <template v-else-if="collection.preview_images.length === 2">
-        <div class="flex h-full gap-0.5">
-          <div class="h-full w-1/2 overflow-hidden">
-            <img
-              :src="collection.preview_images[0]?.small_url"
-              :alt="collection.name"
-              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="h-full w-1/2 overflow-hidden">
-            <img
-              :src="collection.preview_images[1]?.small_url"
-              :alt="collection.name"
-              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        </div>
-      </template>
-
-      <!-- 1 image: full width -->
-      <template v-else-if="collection.preview_images.length === 1">
-        <img
-          :src="collection.preview_images[0]?.small_url"
-          :alt="collection.name"
-          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-          decoding="async"
-        />
-      </template>
+      </div>
 
       <!-- No images: placeholder -->
-      <template v-else>
-        <div class="flex h-full w-full items-center justify-center bg-brand-border">
-          <span class="text-sm text-brand-muted">No photos yet</span>
-        </div>
-      </template>
+      <div v-else class="flex h-full w-full items-center justify-center bg-brand-border">
+        <span class="text-sm text-brand-muted">No photos yet</span>
+      </div>
     </div>
 
     <!-- Card info -->
