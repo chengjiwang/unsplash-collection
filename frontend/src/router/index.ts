@@ -15,16 +15,21 @@ const router = createRouter({
       component: () => import('@/views/PhotoView.vue'),
     },
     {
+      // 巢狀路由讓 NavBar 的 Collections 連結在詳細頁也保持 active
       path: '/collections',
-      name: 'collections',
-      component: () => import('@/views/CollectionsView.vue'),
       meta: { requiresAuth: true },
-    },
-    {
-      path: '/collections/:id',
-      name: 'collection-detail',
-      component: () => import('@/views/CollectionDetailView.vue'),
-      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'collections',
+          component: () => import('@/views/CollectionsView.vue'),
+        },
+        {
+          path: ':id',
+          name: 'collection-detail',
+          component: () => import('@/views/CollectionDetailView.vue'),
+        },
+      ],
     },
     {
       path: '/login',
