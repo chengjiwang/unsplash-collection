@@ -21,6 +21,8 @@ const router = useRouter()
         :src="image.small_url"
         :alt="image.author_name"
         class="w-full rounded-xl object-cover transition-opacity duration-200 group-hover:opacity-90"
+        loading="lazy"
+        decoding="async"
       />
     </div>
   </div>

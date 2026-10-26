@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { useSearchPhotos } from '@/queries/useSearchPhotos'
 import { useSearchStore } from '@/stores/searchStore'
 import { useIntersectionObserver } from '@vueuse/core'
@@ -28,9 +29,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
   <div class="w-full">
     <!-- Initial loading -->
     <div v-if="isLoading" class="flex justify-center py-16">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-gradient-to border-t-transparent"
-      />
+      <LoadingSpinner />
     </div>
 
     <!-- Error state -->
@@ -54,8 +53,12 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <img
           :src="photo.urls.small"
           :alt="photo.alt_description ?? photo.description ?? 'Unsplash photo'"
-          class="w-full object-cover"
+          :width="photo.width"
+          :height="photo.height"
+          :style="{ backgroundColor: photo.color ?? undefined }"
+          class="h-auto w-full object-cover"
           loading="lazy"
+          decoding="async"
         />
       </div>
     </div>
@@ -65,9 +68,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
     <!-- Loading next page -->
     <div v-if="isFetchingNextPage" class="flex justify-center py-8">
-      <div
-        class="h-6 w-6 animate-spin rounded-full border-2 border-brand-gradient-to border-t-transparent"
-      />
+      <LoadingSpinner size="sm" />
     </div>
   </div>
 </template>

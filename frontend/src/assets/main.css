@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
@@ -151,4 +150,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Search results banner (replaces the former 895 KB gradiend-bg.svg; stops sampled from the design) */
+@utility bg-brand-banner {
+  background-image: linear-gradient(
+    to right,
+    var(--brand-gradient-from),
+    #eda39b 40%,
+    #d88ab1 62%,
+    #c259a3 87%,
+    var(--brand-gradient-to)
+  );
 }

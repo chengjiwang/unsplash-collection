@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useCreateCollection } from '@/queries/mutations'
 import { ref } from 'vue'
 
@@ -32,11 +33,10 @@ function handleCancel() {
         <DialogTitle class="text-center">Add Collection</DialogTitle>
       </DialogHeader>
       <div class="flex flex-col gap-4 pt-2">
-        <input
+        <Input
           v-model="newCollectionName"
           type="text"
           placeholder="Collection name..."
-          class="w-full rounded-md border border-brand-border px-3 py-2 text-sm text-brand-ink placeholder:text-brand-muted outline-none focus:border-brand-ink"
           @keyup.enter="handleCreate"
         />
         <div class="flex justify-center gap-3">

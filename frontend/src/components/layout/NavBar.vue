@@ -15,6 +15,10 @@ import {
 const authStore = useAuthStore()
 const logoutMutation = useLogout()
 
+// RouterLink 在目前路由（含子路由）符合時會加上 router-link-active
+const linkClass =
+  'rounded-sm px-4 py-1.5 text-sm font-medium text-brand-muted transition-colors hover:text-brand-ink [&.router-link-active]:bg-brand-border [&.router-link-active]:text-brand-ink'
+
 function handleLogout() {
   logoutMutation.mutate()
 }
@@ -30,28 +34,8 @@ function handleLogout() {
 
       <!-- Nav links -->
       <div class="flex items-center gap-2">
-        <RouterLink
-          to="/"
-          class="rounded-sm px-4 py-1.5 text-sm font-medium transition-colors"
-          :class="
-            $route.name === 'home'
-              ? 'bg-brand-border text-brand-ink'
-              : 'text-brand-muted hover:text-brand-ink'
-          "
-        >
-          Home
-        </RouterLink>
-        <RouterLink
-          to="/collections"
-          class="rounded-sm px-4 py-1.5 text-sm font-medium transition-colors"
-          :class="
-            $route.name === 'collections'
-              ? 'bg-brand-border text-brand-ink'
-              : 'text-brand-muted hover:text-brand-ink'
-          "
-        >
-          Collections
-        </RouterLink>
+        <RouterLink to="/" :class="linkClass"> Home </RouterLink>
+        <RouterLink to="/collections" :class="linkClass"> Collections </RouterLink>
 
         <!-- Auth: 已登入 -->
         <template v-if="authStore.isLoggedIn">
@@ -74,17 +58,7 @@ function handleLogout() {
 
         <!-- Auth: 未登入 -->
         <template v-else>
-          <RouterLink
-            to="/login"
-            class="rounded-sm px-4 py-1.5 text-sm font-medium transition-colors"
-            :class="
-              $route.name === 'login'
-                ? 'bg-brand-border text-brand-ink'
-                : 'text-brand-muted hover:text-brand-ink'
-            "
-          >
-            Login
-          </RouterLink>
+          <RouterLink to="/login" :class="linkClass"> Login </RouterLink>
         </template>
       </div>
     </div>

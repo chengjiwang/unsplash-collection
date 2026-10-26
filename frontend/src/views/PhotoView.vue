@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import AddToCollectionModal from '@/components/photo/AddToCollectionModal.vue'
 import PhotoCollectionList from '@/components/photo/PhotoCollectionList.vue'
 import PhotoDetail from '@/components/photo/PhotoDetail.vue'
 import { useCollections } from '@/queries/useCollections'
 import { usePhoto } from '@/queries/usePhoto'
+import { useAuthStore } from '@/stores/authStore'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const photoId = computed(() => String(route.params['id']))
 const modalOpen = ref(false)
@@ -17,7 +20,17 @@ const modalOpen = ref(false)
 const { data: photo, isLoading: photoLoading, isError } = usePhoto(photoId)
 
 const collectionsParams = computed(() => ({ image_id: photoId.value }))
-const { data: collections, isLoading: collectionsLoading } = useCollections(collectionsParams)
+const { data: collections, isLoading: collectionsLoading } = useCollections(collectionsParams, {
+  enabled: () => authStore.isLoggedIn,
+})
+
+function openAddToCollection() {
+  if (!authStore.isLoggedIn) {
+    router.push({ name: 'login', query: { redirect: route.fullPath } })
+    return
+  }
+  modalOpen.value = true
+}
 
 function goBack() {
   router.back()
@@ -28,9 +41,7 @@ function goBack() {
   <div class="mx-auto max-w-7xl px-6 py-10">
     <!-- Loading -->
     <div v-if="photoLoading" class="flex h-96 items-center justify-center">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-border border-t-brand-ink"
-      />
+      <LoadingSpinner />
     </div>
 
     <!-- Error -->
@@ -58,19 +69,25 @@ function goBack() {
 
       <!-- Right: info panel -->
       <div class="flex flex-1 flex-col gap-6">
-        <PhotoDetail :photo="photo" @add-to-collection="modalOpen = true" />
+        <PhotoDetail :photo="photo" @add-to-collection="openAddToCollection" />
 
-        <hr class="border-brand-border" />
+        <template v-if="authStore.isLoggedIn">
+          <hr class="border-brand-border" />
 
-        <PhotoCollectionList
-          :photo-id="photoId"
-          :collections="collections ?? []"
-          :is-loading="collectionsLoading"
-        />
+          <PhotoCollectionList
+            :photo-id="photoId"
+            :collections="collections ?? []"
+            :is-loading="collectionsLoading"
+          />
+        </template>
       </div>
     </div>
 
     <!-- Add to Collection Modal -->
-    <AddToCollectionModal v-if="photo" v-model:open="modalOpen" :photo="photo" />
+    <AddToCollectionModal
+      v-if="photo && authStore.isLoggedIn"
+      v-model:open="modalOpen"
+      :photo="photo"
+    />
   </div>
 </template>

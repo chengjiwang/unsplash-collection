@@ -1,5 +1,8 @@
 export interface UnsplashPhoto {
   id: string
+  width: number
+  height: number
+  color: string | null
   urls: {
     regular: string
     thumb: string
@@ -25,6 +28,12 @@ export interface Collection {
   created_at: string
   image_count: number
   preview_images: { thumb_url: string; small_url: string }[]
+}
+
+export interface CollectionQueryParams {
+  image_id?: string
+  name?: string
+  exclude_image_id?: string
 }
 
 export type CollectionDetail = Omit<Collection, 'preview_images'>

@@ -6,11 +6,12 @@ import 'vue-sonner/style.css'
 import App from './App.vue'
 import './assets/main.css'
 import router from './router'
+import { queryClient } from './lib/queryClient'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(VueQueryPlugin)
+app.use(VueQueryPlugin, { queryClient })
 
 app.mount('#app')
