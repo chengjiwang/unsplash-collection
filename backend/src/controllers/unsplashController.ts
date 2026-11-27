@@ -1,6 +1,43 @@
 import { NextFunction, Request, Response } from 'express';
+import {
+  PhotoIdSchema,
+  SearchQuerySchema,
+} from '../schemas/unsplashSchemas.js';
 
 const UNSPLASH_API_BASE = 'https://api.unsplash.com';
+
+/**
+ * Translate a failed upstream (Unsplash / image CDN) response into a status
+ * for our own client. Upstream 401/403 mean *our* access key is invalid or
+ * the quota is used up — never forward them as-is, or the frontend treats
+ * them as an expired login and logs the user out.
+ */
+const sendUpstreamError = (
+  res: Response,
+  upstream: globalThis.Response,
+  context: string,
+): void => {
+  const rateLimited =
+    upstream.status === 429 ||
+    (upstream.status === 403 &&
+      upstream.headers.get('x-ratelimit-remaining') === '0');
+
+  console.error(`[unsplash] ${context} failed: upstream ${upstream.status}`);
+
+  if (upstream.status === 404) {
+    res.status(404).json({ error: 'Photo not found' });
+    return;
+  }
+
+  if (rateLimited) {
+    res
+      .status(429)
+      .json({ error: 'Unsplash rate limit exceeded, please try again later' });
+    return;
+  }
+
+  res.status(502).json({ error: 'Failed to fetch from Unsplash' });
+};
 
 export const searchPhotos = async (
   req: Request,
@@ -14,15 +51,23 @@ export const searchPhotos = async (
       return;
     }
 
-    const { query, page = '1', per_page = '10' } = req.query;
-
-    if (typeof query !== 'string' || query.trim().length === 0) {
-      res.status(400).json({ error: 'query parameter is required' });
+    const parsed = SearchQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      const queryInvalid = parsed.error.issues.some(
+        (issue) => issue.path[0] === 'query',
+      );
+      res.status(400).json({
+        error: queryInvalid
+          ? 'query parameter is required'
+          : 'Invalid pagination parameters',
+      });
       return;
     }
 
+    const { query, page, per_page } = parsed.data;
+
     const params = new URLSearchParams({
-      query: query.trim(),
+      query,
       page: String(page),
       per_page: String(per_page),
     });
@@ -38,9 +83,7 @@ export const searchPhotos = async (
     );
 
     if (!response.ok) {
-      res
-        .status(response.status)
-        .json({ error: 'Failed to fetch from Unsplash' });
+      sendUpstreamError(res, response, 'search');
       return;
     }
 
@@ -63,24 +106,25 @@ export const getPhoto = async (
       return;
     }
 
-    const { id } = req.params;
-
-    const response = await fetch(`${UNSPLASH_API_BASE}/photos/${id}`, {
-      headers: {
-        Authorization: `Client-ID ${accessKey}`,
-        'Accept-Version': 'v1',
-      },
-    });
-
-    if (response.status === 404) {
-      res.status(404).json({ error: 'Photo not found' });
+    const parsedId = PhotoIdSchema.safeParse(req.params['id']);
+    if (!parsedId.success) {
+      res.status(400).json({ error: 'Invalid photo id' });
       return;
     }
+    const id = parsedId.data;
+
+    const response = await fetch(
+      `${UNSPLASH_API_BASE}/photos/${encodeURIComponent(id)}`,
+      {
+        headers: {
+          Authorization: `Client-ID ${accessKey}`,
+          'Accept-Version': 'v1',
+        },
+      },
+    );
 
     if (!response.ok) {
-      res
-        .status(response.status)
-        .json({ error: 'Failed to fetch from Unsplash' });
+      sendUpstreamError(res, response, 'get photo');
       return;
     }
 
@@ -103,11 +147,16 @@ export const downloadPhoto = async (
       return;
     }
 
-    const { id } = req.params;
+    const parsedId = PhotoIdSchema.safeParse(req.params['id']);
+    if (!parsedId.success) {
+      res.status(400).json({ error: 'Invalid photo id' });
+      return;
+    }
+    const id = parsedId.data;
 
     // Trigger download tracking as required by Unsplash API guidelines
     const trackResponse = await fetch(
-      `${UNSPLASH_API_BASE}/photos/${id}/download`,
+      `${UNSPLASH_API_BASE}/photos/${encodeURIComponent(id)}/download`,
       {
         headers: {
           Authorization: `Client-ID ${accessKey}`,
@@ -117,9 +166,7 @@ export const downloadPhoto = async (
     );
 
     if (!trackResponse.ok) {
-      res
-        .status(trackResponse.status)
-        .json({ error: 'Failed to track download' });
+      sendUpstreamError(res, trackResponse, 'track download');
       return;
     }
 
@@ -131,7 +178,7 @@ export const downloadPhoto = async (
     const imageResponse = await fetch(imageUrl);
 
     if (!imageResponse.ok) {
-      res.status(imageResponse.status).json({ error: 'Failed to fetch image' });
+      sendUpstreamError(res, imageResponse, 'fetch image');
       return;
     }
 

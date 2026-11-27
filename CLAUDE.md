@@ -15,7 +15,7 @@ Run commands inside `backend/` or `frontend/` respectively.
 **Backend** (`backend/`)
 - `pnpm dev` — tsx watch on `src/server.ts` (port `PORT`, default 3001)
 - `pnpm build` — `prisma generate` + esbuild-bundle the generated client, then `tsc` (type-check only — see `backend/CLAUDE.md`)
-- `pnpm lint` / `pnpm lint:fix` (currently broken — see `backend/CLAUDE.md`)
+- `pnpm lint` / `pnpm lint:fix` (runs, but not yet clean — see `backend/CLAUDE.md`)
 - `pnpm prisma migrate dev --name <name>` — create/apply a migration; `pnpm prisma generate` after schema edits
 - No backend test suite exists.
 

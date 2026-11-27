@@ -7,7 +7,7 @@ Backend-specific notes. Commands, env vars, routing layout, the Prisma client lo
 ## Tooling gotchas
 
 - `tsconfig.json` sets `noEmit: true` (required by `allowImportingTsExtensions`), so `tsc` in `pnpm build` is **type-check only**. Nothing is ever written to `dist/`, which means `pnpm start` (`node dist/server.js`) doesn't work as configured. The only part of `build` that produces output is `prisma:bundle`, which writes `generated/prisma/client.js`. Use `pnpm dev` locally, and `npx tsc -p .` for a standalone type-check.
-- `pnpm lint` is currently broken: `eslint.config.js` imports `@eslint/js`, which isn't installed.
+- `pnpm lint` runs `typescript-eslint`'s `recommendedTypeChecked` (flat config in `eslint.config.js`). It still reports a handful of pre-existing errors, so it isn't clean yet.
 - New dependencies that need install scripts (e.g. Prisma, esbuild) must be listed under `onlyBuiltDependencies` in `pnpm-workspace.yaml`, or pnpm 10 skips their scripts.
 - Express 5 types `req.params` loosely, so controllers wrap values in `String(req.params['id'])`.
 
@@ -30,6 +30,7 @@ Each handler is `async (req, res, next): Promise<void>` with the whole body in `
 ## Unsplash proxy
 
 - Every handler re-reads `UNSPLASH_ACCESS_KEY` and returns a 500 if it's missing. Requests send `Authorization: Client-ID …` and `Accept-Version: v1`. Search defaults to `per_page=10`.
+- Inputs are validated by `schemas/unsplashSchemas.ts` before reaching the upstream URL: `:id` must match `[A-Za-z0-9_-]{1,64}`, `page` ≥ 1, `per_page` 1–30; otherwise 400. Keep `encodeURIComponent` on any param placed in an upstream path.
 - The download route first calls Unsplash's `/photos/:id/download`, which Unsplash's API guidelines require for download tracking. It then fetches the returned URL and sends the bytes back as an attachment, always named `<id>.jpg`.
 
 ## Auth details

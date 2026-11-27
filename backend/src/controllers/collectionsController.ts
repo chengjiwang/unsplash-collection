@@ -98,14 +98,16 @@ export const createCollection = async (
   try {
     const result = CreateCollectionSchema.safeParse(req.body);
     if (!result.success) {
-      res.status(400).json({ error: 'Collection name is required' });
+      res
+        .status(400)
+        .json({ error: 'Collection name must be 1-255 characters' });
       return;
     }
 
-    const trimmedName = result.data.name.trim();
+    const { name } = result.data;
 
     const existing = await prisma.collection.findUnique({
-      where: { userId_name: { userId: req.userId, name: trimmedName } },
+      where: { userId_name: { userId: req.userId, name } },
     });
 
     if (existing !== null) {
@@ -114,7 +116,7 @@ export const createCollection = async (
     }
 
     const collection = await prisma.collection.create({
-      data: { name: trimmedName, userId: req.userId },
+      data: { name, userId: req.userId },
     });
 
     res.status(201).json({
@@ -137,7 +139,7 @@ export const addImageToCollection = async (
 
     const result = AddImageSchema.safeParse(req.body);
     if (!result.success) {
-      res.status(400).json({ error: 'All image fields are required' });
+      res.status(400).json({ error: 'Invalid image data' });
       return;
     }
 
@@ -161,7 +163,7 @@ export const addImageToCollection = async (
 
     const existing = await prisma.collectionImage.findUnique({
       where: {
-        collectionId_imageId: { collectionId, imageId: image_id.trim() },
+        collectionId_imageId: { collectionId, imageId: image_id },
       },
     });
 
@@ -175,11 +177,11 @@ export const addImageToCollection = async (
     const image = await prisma.collectionImage.create({
       data: {
         collectionId,
-        imageId: image_id.trim(),
-        imageUrl: image_url.trim(),
-        thumbUrl: thumb_url.trim(),
-        smallUrl: small_url.trim(),
-        authorName: author_name.trim(),
+        imageId: image_id,
+        imageUrl: image_url,
+        thumbUrl: thumb_url,
+        smallUrl: small_url,
+        authorName: author_name,
         publishedAt: new Date(published_at),
       },
     });
