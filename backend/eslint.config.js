@@ -1,21 +1,17 @@
 import js from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsparser from '@typescript-eslint/parser';
-import standard from 'eslint-config-standard-with-typescript';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default tseslint.config(
+  { ignores: ['generated/**', 'dist/**'] },
   js.configs.recommended,
   {
     files: ['src/**/*.ts'],
+    extends: [...tseslint.configs.recommendedTypeChecked],
     languageOptions: {
-      parser: tsparser,
       parserOptions: {
-        project: './tsconfig.json',
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
-    plugins: { '@typescript-eslint': tseslint },
-    rules: {
-      ...standard.rules,
-    },
   },
-];
+);

@@ -7,7 +7,7 @@ Backend-specific notes. Commands, env vars, routing layout, the Prisma client lo
 ## Tooling gotchas
 
 - `tsconfig.json` sets `noEmit: true` (required by `allowImportingTsExtensions`), so `tsc` in `pnpm build` is **type-check only**. Nothing is ever written to `dist/`, which means `pnpm start` (`node dist/server.js`) doesn't work as configured. The only part of `build` that produces output is `prisma:bundle`, which writes `generated/prisma/client.js`. Use `pnpm dev` locally, and `npx tsc -p .` for a standalone type-check.
-- `pnpm lint` is currently broken: `eslint.config.js` imports `@eslint/js`, which isn't installed.
+- `pnpm lint` runs `typescript-eslint`'s `recommendedTypeChecked` (flat config in `eslint.config.js`). It still reports a handful of pre-existing errors, so it isn't clean yet.
 - New dependencies that need install scripts (e.g. Prisma, esbuild) must be listed under `onlyBuiltDependencies` in `pnpm-workspace.yaml`, or pnpm 10 skips their scripts.
 - Express 5 types `req.params` loosely, so controllers wrap values in `String(req.params['id'])`.
 
