@@ -30,6 +30,7 @@ Each handler is `async (req, res, next): Promise<void>` with the whole body in `
 ## Unsplash proxy
 
 - Every handler re-reads `UNSPLASH_ACCESS_KEY` and returns a 500 if it's missing. Requests send `Authorization: Client-ID …` and `Accept-Version: v1`. Search defaults to `per_page=10`.
+- Inputs are validated by `schemas/unsplashSchemas.ts` before reaching the upstream URL: `:id` must match `[A-Za-z0-9_-]{1,64}`, `page` ≥ 1, `per_page` 1–30; otherwise 400. Keep `encodeURIComponent` on any param placed in an upstream path.
 - The download route first calls Unsplash's `/photos/:id/download`, which Unsplash's API guidelines require for download tracking. It then fetches the returned URL and sends the bytes back as an attachment, always named `<id>.jpg`.
 
 ## Auth details
