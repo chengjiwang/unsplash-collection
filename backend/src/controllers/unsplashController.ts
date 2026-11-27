@@ -2,6 +2,39 @@ import { NextFunction, Request, Response } from 'express';
 
 const UNSPLASH_API_BASE = 'https://api.unsplash.com';
 
+/**
+ * Translate a failed upstream (Unsplash / image CDN) response into a status
+ * for our own client. Upstream 401/403 mean *our* access key is invalid or
+ * the quota is used up — never forward them as-is, or the frontend treats
+ * them as an expired login and logs the user out.
+ */
+const sendUpstreamError = (
+  res: Response,
+  upstream: globalThis.Response,
+  context: string,
+): void => {
+  const rateLimited =
+    upstream.status === 429 ||
+    (upstream.status === 403 &&
+      upstream.headers.get('x-ratelimit-remaining') === '0');
+
+  console.error(`[unsplash] ${context} failed: upstream ${upstream.status}`);
+
+  if (upstream.status === 404) {
+    res.status(404).json({ error: 'Photo not found' });
+    return;
+  }
+
+  if (rateLimited) {
+    res
+      .status(429)
+      .json({ error: 'Unsplash rate limit exceeded, please try again later' });
+    return;
+  }
+
+  res.status(502).json({ error: 'Failed to fetch from Unsplash' });
+};
+
 export const searchPhotos = async (
   req: Request,
   res: Response,
@@ -38,9 +71,7 @@ export const searchPhotos = async (
     );
 
     if (!response.ok) {
-      res
-        .status(response.status)
-        .json({ error: 'Failed to fetch from Unsplash' });
+      sendUpstreamError(res, response, 'search');
       return;
     }
 
@@ -72,15 +103,8 @@ export const getPhoto = async (
       },
     });
 
-    if (response.status === 404) {
-      res.status(404).json({ error: 'Photo not found' });
-      return;
-    }
-
     if (!response.ok) {
-      res
-        .status(response.status)
-        .json({ error: 'Failed to fetch from Unsplash' });
+      sendUpstreamError(res, response, 'get photo');
       return;
     }
 
@@ -117,9 +141,7 @@ export const downloadPhoto = async (
     );
 
     if (!trackResponse.ok) {
-      res
-        .status(trackResponse.status)
-        .json({ error: 'Failed to track download' });
+      sendUpstreamError(res, trackResponse, 'track download');
       return;
     }
 
@@ -131,7 +153,7 @@ export const downloadPhoto = async (
     const imageResponse = await fetch(imageUrl);
 
     if (!imageResponse.ok) {
-      res.status(imageResponse.status).json({ error: 'Failed to fetch image' });
+      sendUpstreamError(res, imageResponse, 'fetch image');
       return;
     }
 
